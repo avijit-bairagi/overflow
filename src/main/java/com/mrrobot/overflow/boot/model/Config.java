@@ -11,8 +11,8 @@ public class Config {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    String name;
-    String version;
+    String appName;
+    String appVersion;
 
     public Long getId() {
         return id;
@@ -22,19 +22,19 @@ public class Config {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getAppName() {
+        return appName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
-    public String getVersion() {
-        return version;
+    public String getAppVersion() {
+        return appVersion;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 }

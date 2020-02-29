@@ -7,61 +7,21 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
-     
-    <appender name="translog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${APP_LOG_ROOT}/transaction.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${APP_LOG_ROOT}/transaction-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>10MB</maxFileSize>
-        </triggeringPolicy>
-    </appender>  
-     
-    <appender name="errorlog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${APP_LOG_ROOT}/error.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${APP_LOG_ROOT}/error-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>10MB</maxFileSize>
-        </triggeringPolicy>
-    </appender>  
     
-    <appender name="accesslog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="debuglog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${APP_LOG_ROOT}/access.log</file>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${APP_LOG_ROOT}/access-%i.log</fileNamePattern>
+            <fileNamePattern>${APP_LOG_ROOT}/debug-%i.log</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>10</maxIndex>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>10MB</maxFileSize>
         </triggeringPolicy>
-    </appender>  
-     
-    <logger name="error-logger" level="ERROR">
-        <appender-ref ref="errorlog" />
-        <appender-ref ref="console" />
-    </logger>
-    
-    <logger name="access-logger" level="DEBUG">
-        <appender-ref ref="accesslog" />
-        <appender-ref ref="console" />
-    </logger>
+    </appender>
  
      <root level="info">
         <appender-ref ref="console" />

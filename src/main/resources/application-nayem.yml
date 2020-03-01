@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://5.134.12.145:3306/musaddik_test
+    username: musaddik_user
+    password: musaddik@123

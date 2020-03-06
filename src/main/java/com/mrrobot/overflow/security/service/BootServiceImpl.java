@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.common.service;
+package com.mrrobot.overflow.security.service;
 
 import com.mrrobot.overflow.common.model.Config;
 import com.mrrobot.overflow.common.repository.BootRepository;

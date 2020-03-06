@@ -11,7 +11,6 @@ import javax.persistence.Id;
 @Setter
 @Entity(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;

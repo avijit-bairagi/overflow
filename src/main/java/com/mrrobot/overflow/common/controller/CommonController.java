@@ -24,7 +24,12 @@ public class CommonController {
 
     @GetMapping
     public ResponseEntity<List<Config> > getApplicationConfigs(){
+
+        log.debug("getApplicationConfigs(): start");
+
         List<Config> configs = bootService.getConfig();
+
+        log.debug("getApplicationConfigs(): end");
 
         return ResponseEntity.status(HttpStatus.OK).body(configs);
     }

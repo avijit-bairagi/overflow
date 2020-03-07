@@ -1,5 +1,6 @@
 package com.mrrobot.overflow.security.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.profile.model.Role;
@@ -10,11 +11,15 @@ import com.mrrobot.overflow.security.jwt.JwtProvider;
 import com.mrrobot.overflow.security.model.JwtResponse;
 import com.mrrobot.overflow.security.model.LoginBody;
 import com.mrrobot.overflow.security.model.RegistrationBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -43,24 +48,44 @@ public class AuthController {
     @Autowired
     JwtProvider jwtProvider;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
+    Logger log = LoggerFactory.getLogger("debug-logger");
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginBody loginBody) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginBody.getUsername(),
-                        loginBody.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = jwtProvider.generateJwtToken(authentication);
-
         Response response = new Response();
-        response.setCode(ResponseStatus.SUCCESS.value());
-        response.setMessage("Login successful!");
-        response.setData(new JwtResponse(jwt));
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginBody.getUsername(),
+                            loginBody.getPassword()
+                    )
+            );
+
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String jwt = jwtProvider.generateJwtToken(authentication);
+
+            response.setCode(ResponseStatus.SUCCESS.value());
+            response.setMessage("Login successful!");
+            response.setData(new JwtResponse(jwt));
+
+            return ResponseEntity.badRequest().body(response);
+
+        } catch (BadCredentialsException e) {
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(ResponseStatus.BAD_CREDENTIALS.value());
+            response.setMessage(e.getMessage());
+        } catch (AuthenticationException e) {
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(ResponseStatus.AUTH_ERROR.value());
+            response.setMessage(e.getMessage());
+        }
 
         return ResponseEntity.badRequest().body(response);
     }

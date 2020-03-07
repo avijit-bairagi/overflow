@@ -27,4 +27,16 @@ public class Profile {
     Boolean isOpenForJob;
     Date createdDate;
     Date updatedDate;
+
+    public Profile() {
+    }
+
+    public Profile(String firstName, String lastName, String addressLine, String city, String phoneNo, Boolean isOpenForJob) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.addressLine = addressLine;
+        this.city = city;
+        this.phoneNo = phoneNo;
+        this.isOpenForJob = isOpenForJob;
+    }
 }

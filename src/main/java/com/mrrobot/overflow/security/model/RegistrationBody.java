@@ -1,14 +1,16 @@
 package com.mrrobot.overflow.security.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
+@Getter
+@Setter
 public class RegistrationBody {
-    @NotBlank
-    @Size(min = 3, max = 50)
-    private String name;
 
     @NotBlank
     @Size(min = 3, max = 50)
@@ -25,43 +27,26 @@ public class RegistrationBody {
     @Size(min = 6, max = 40)
     private String password;
 
-    public String getName() {
-        return name;
-    }
+    @NotBlank
+    @Size(min = 3, max = 40)
+    private String firstName;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @NotBlank
+    @Size(min = 3, max = 40)
+    private String lastName;
 
-    public String getUsername() {
-        return username;
-    }
+    @NotBlank
+    @Size(min = 6, max = 40)
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    private String addressLine;
+    @NotBlank
 
-    public String getEmail() {
-        return email;
-    }
+    @Size(min = 3, max = 40)
+    private String city;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    @NotBlank
+    @Size(min = 6, max = 40)
+    private String phoneNo;
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<String> getRole() {
-        return this.role;
-    }
-
-    public void setRole(Set<String> role) {
-        this.role = role;
-    }
+    Boolean isOpenForJob;
 }

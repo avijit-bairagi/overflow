@@ -1,7 +1,6 @@
 package com.mrrobot.overflow.post.controller;
 
 import com.mrrobot.overflow.common.exception.AlreadyExitsException;
-import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Topic;
@@ -15,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 
 @RestController

@@ -1,6 +1,5 @@
 package com.mrrobot.overflow.post.entity;
 
-import com.mrrobot.overflow.profile.entity.Role;
 import com.mrrobot.overflow.profile.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +32,7 @@ public class Post {
     @JoinTable(name = "post_topics",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "topic_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<Topic> topics = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "post_likes",
@@ -46,4 +45,14 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "comment_id"))
     private Set<Comment> comments = new HashSet<>();
+
+    public Post() {
+    }
+
+    public Post(String title, String description, Long postedBy, Set<Topic> topics) {
+        this.title = title;
+        this.description = description;
+        this.postedBy = postedBy;
+        this.topics = topics;
+    }
 }

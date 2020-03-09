@@ -1,7 +1,7 @@
 package com.mrrobot.overflow.common.controller;
 
-import com.mrrobot.overflow.common.service.BootService;
-import com.mrrobot.overflow.common.model.Config;
+import com.mrrobot.overflow.security.service.BootService;
+import com.mrrobot.overflow.common.entity.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

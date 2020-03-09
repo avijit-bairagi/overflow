@@ -22,9 +22,9 @@ public class Post {
     Long groupId;
     String title;
     String description;
-    Integer hit;
-    Integer favourite;
-    Double point;
+    Integer hit = 0;
+    Integer favourite = 0;
+    Double point = 0.0;
     Long postedBy;
     Date createdDate;
     Date updatedDate;

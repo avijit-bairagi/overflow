@@ -18,7 +18,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String description;
-    Integer hit;
+    Integer hit = 0;
     Long commentedBy;
     Date createdDate;
     Date updatedDate;

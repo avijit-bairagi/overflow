@@ -22,10 +22,10 @@ public class Profile {
     String addressLine;
     String city;
     String phoneNo;
-    Integer level;
-    Double point;
-    Boolean isOpenForJob;
-    Boolean isActive;
+    Integer level = 0;
+    Double point = 0.0;
+    Boolean isOpenForJob = false;
+    Boolean isActive = true;
     Date createdDate;
     Date updatedDate;
 

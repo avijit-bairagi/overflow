@@ -18,7 +18,15 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
-    Integer hit;
-    Date createdDate;
+    Integer hit = 0;
+    Date createdDate = new Date();
     Long createdBy;
+
+    public Topic() {
+    }
+
+    public Topic(String name, Long createdBy) {
+        this.name = name;
+        this.createdBy = createdBy;
+    }
 }

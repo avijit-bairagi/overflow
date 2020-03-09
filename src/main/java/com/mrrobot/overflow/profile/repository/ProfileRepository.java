@@ -1,7 +1,6 @@
 package com.mrrobot.overflow.profile.repository;
 
-import com.mrrobot.overflow.profile.model.Profile;
-import com.mrrobot.overflow.profile.model.User;
+import com.mrrobot.overflow.profile.entity.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

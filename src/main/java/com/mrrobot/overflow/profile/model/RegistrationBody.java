@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.security.model;
+package com.mrrobot.overflow.profile.model;
 
 import lombok.Getter;
 import lombok.Setter;

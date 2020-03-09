@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.common.model;
+package com.mrrobot.overflow.common.entity;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.mrrobot.overflow.profile.service;
 
-import com.mrrobot.overflow.profile.model.User;
+import com.mrrobot.overflow.profile.entity.User;
 
 import java.util.Optional;
 

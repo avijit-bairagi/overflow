@@ -1,6 +1,6 @@
 package com.mrrobot.overflow.profile.service;
 
-import com.mrrobot.overflow.profile.model.Profile;
+import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

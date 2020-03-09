@@ -4,7 +4,7 @@ import com.mrrobot.overflow.common.exception.AlreadyExitsException;
 import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
-import com.mrrobot.overflow.profile.model.Role;
+import com.mrrobot.overflow.profile.entity.Role;
 import com.mrrobot.overflow.profile.model.RoleBody;
 import com.mrrobot.overflow.profile.service.RoleService;
 import org.slf4j.Logger;

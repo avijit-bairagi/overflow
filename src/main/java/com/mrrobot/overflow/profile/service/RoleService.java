@@ -2,7 +2,7 @@ package com.mrrobot.overflow.profile.service;
 
 import com.mrrobot.overflow.common.exception.AlreadyExitsException;
 import com.mrrobot.overflow.common.exception.NotFoundException;
-import com.mrrobot.overflow.profile.model.Role;
+import com.mrrobot.overflow.profile.entity.Role;
 
 import java.util.List;
 import java.util.Optional;

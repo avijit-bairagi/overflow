@@ -1,6 +1,6 @@
 package com.mrrobot.overflow.security.service;
 
-import com.mrrobot.overflow.common.model.Config;
+import com.mrrobot.overflow.common.entity.Config;
 
 import java.util.List;
 

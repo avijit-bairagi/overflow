@@ -1,7 +1,7 @@
 package com.mrrobot.overflow.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mrrobot.overflow.profile.model.User;
+import com.mrrobot.overflow.profile.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

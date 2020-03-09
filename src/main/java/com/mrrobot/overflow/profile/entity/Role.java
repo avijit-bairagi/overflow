@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.profile.model;
+package com.mrrobot.overflow.profile.entity;
 
 import lombok.Getter;
 import lombok.Setter;

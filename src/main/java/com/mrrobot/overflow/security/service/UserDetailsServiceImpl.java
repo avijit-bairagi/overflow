@@ -1,6 +1,6 @@
 package com.mrrobot.overflow.security.service;
 
-import com.mrrobot.overflow.profile.model.User;
+import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.profile.repository.UserRepository;
 import com.mrrobot.overflow.security.model.UserPrinciple;
 import org.springframework.beans.factory.annotation.Autowired;

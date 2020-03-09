@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.profile.model;
+package com.mrrobot.overflow.profile.entity;
 
 import java.util.HashSet;
 import java.util.Set;

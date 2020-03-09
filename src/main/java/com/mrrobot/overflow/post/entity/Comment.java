@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.post.model;
+package com.mrrobot.overflow.post.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,19 +11,15 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Entity(name = "posts")
-public class Post {
+@Entity(name = "comments")
+public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long groupId;
-    String title;
     String description;
     Integer hit;
-    Integer favourite;
-    Double point;
-    Long postedBy;
+    Long commentedBy;
     Date createdDate;
     Date updatedDate;
 }

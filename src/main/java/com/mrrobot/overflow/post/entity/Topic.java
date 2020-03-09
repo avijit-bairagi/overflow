@@ -1,4 +1,4 @@
-package com.mrrobot.overflow.post.model;
+package com.mrrobot.overflow.post.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,15 +11,14 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Entity(name = "rooms")
-public class Group {
+@Entity(name = "topics")
+public class Topic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
-    String description;
-    Long createdBy;
+    Integer hit;
     Date createdDate;
-    Date updatedDate;
+    Long createdBy;
 }

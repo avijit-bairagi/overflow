@@ -25,6 +25,7 @@ public class Profile {
     Integer level;
     Double point;
     Boolean isOpenForJob;
+    Boolean isActive;
     Date createdDate;
     Date updatedDate;
 

@@ -9,6 +9,7 @@ import com.mrrobot.overflow.profile.service.ProfileService;
 import com.mrrobot.overflow.profile.service.UserService;
 import com.mrrobot.overflow.security.jwt.JwtProvider;
 import com.mrrobot.overflow.security.model.UserData;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +29,9 @@ public class ProfileController {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -62,10 +66,13 @@ public class ProfileController {
         return ResponseEntity.ok().body(userData);
     }
 
-    private ProfileResponse getProfileData(User u, Profile p) {
-        return new ProfileResponse(u.getUsername(), u.getEmail(), p.getFirstName(), p.getLastName(),
-                p.getAddressLine(), p.getCity(), p.getPhoneNo(), p.getLevel(), p.getPoint(),
-                p.getIsOpenForJob(), p.getCreatedDate(), p.getUpdatedDate());
+    private ProfileResponse getProfileData(User user, Profile profile) {
+
+        ProfileResponse response = modelMapper.map(profile, ProfileResponse.class);
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 
 }

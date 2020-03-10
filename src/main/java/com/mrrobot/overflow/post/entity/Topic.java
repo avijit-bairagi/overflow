@@ -1,5 +1,6 @@
 package com.mrrobot.overflow.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,12 +15,16 @@ import java.util.Date;
 @Entity(name = "topics")
 public class Topic {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
+    @JsonIgnore
     Integer hit = 0;
+    @JsonIgnore
     Date createdDate = new Date();
+    @JsonIgnore
     Long createdBy;
 
     public Topic() {

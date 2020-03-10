@@ -1,6 +1,5 @@
 package com.mrrobot.overflow.post.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,20 +8,14 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Entity(name = "comments")
-public class Comment {
+@Entity(name = "likes")
+public class Like {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String description;
-    Integer hit = 0;
-    Long commentedBy;
-    Date createdDate = new Date();
-    Date updatedDate;
+    Long likedBy;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="postId", nullable=false)
     private Post post;

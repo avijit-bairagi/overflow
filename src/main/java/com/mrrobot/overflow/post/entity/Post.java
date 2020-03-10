@@ -18,14 +18,14 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    Long groupId;
+    Long groupId = 0l;
     String title;
     String description;
     Integer hit = 0;
     Integer favourite = 0;
     Double point = 0.0;
     Long postedBy;
-    Date createdDate;
+    Date createdDate = new Date();
     Date updatedDate;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -34,17 +34,17 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "topic_id"))
     private Set<Topic> topics = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "post_likes",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users = new HashSet<>();
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "post_likes",
+//            joinColumns = @JoinColumn(name = "post_id"),
+//            inverseJoinColumns = @JoinColumn(name = "user_id"))
+//    private Set<User> users = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "post_comments",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "comment_id"))
-    private Set<Comment> comments = new HashSet<>();
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "post_comments",
+//            joinColumns = @JoinColumn(name = "post_id"),
+//            inverseJoinColumns = @JoinColumn(name = "comment_id"))
+//    private Set<Comment> comments = new HashSet<>();
 
     public Post() {
     }

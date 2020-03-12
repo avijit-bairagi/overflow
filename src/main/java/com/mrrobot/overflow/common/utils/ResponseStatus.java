@@ -4,6 +4,7 @@ public enum ResponseStatus {
 
     SUCCESS("1000", "Success"),
     ALREADY_EXITS("1409", "Already Exits"),
+    ALREADY_LIKED("1408", "Already Liked"),
     BAD_CREDENTIALS("1401", "Bad credentials"),
     NOT_FOUND("1404", "Not found"),
     AUTH_ERROR("1111", "Auth error");

@@ -1,6 +1,7 @@
 package com.mrrobot.overflow.post.model;
 
 import com.mrrobot.overflow.post.entity.Comment;
+import com.mrrobot.overflow.post.entity.Like;
 import com.mrrobot.overflow.post.entity.Topic;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,4 +26,5 @@ public class PostResponse {
 
     Set<Topic> topics;
     List<Comment> comments;
+    List<Like> likes;
 }

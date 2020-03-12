@@ -1,16 +1,20 @@
 package com.mrrobot.overflow.post.controller;
 
 import com.mrrobot.overflow.common.exception.AlreadyExitsException;
+import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Comment;
+import com.mrrobot.overflow.post.entity.Like;
 import com.mrrobot.overflow.post.entity.Post;
 import com.mrrobot.overflow.post.entity.Topic;
 import com.mrrobot.overflow.post.model.PostBody;
 import com.mrrobot.overflow.post.model.PostResponse;
 import com.mrrobot.overflow.post.service.CommentService;
+import com.mrrobot.overflow.post.service.LikeService;
 import com.mrrobot.overflow.post.service.PostService;
 import com.mrrobot.overflow.post.service.TopicService;
+import com.mrrobot.overflow.profile.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +40,13 @@ public class PostController {
     CommentService commentService;
 
     @Autowired
+    LikeService likeService;
+
+    @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    UserService userService;
 
     Logger log = LoggerFactory.getLogger("debug-logger");
 
@@ -67,10 +77,11 @@ public class PostController {
         }
 
         List<Comment> comments = commentService.findByPostId(postId);
+        List<Like> likes = likeService.findByPostId(postId);
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");
-        response.setData(getPostResponse(postOptional.get(), comments));
+        response.setData(getPostResponse(postOptional.get(), comments, likes));
 
         return ResponseEntity.ok(response);
     }
@@ -153,7 +164,7 @@ public class PostController {
             Post post = postService.save(new Post(postBody.getTitle(), postBody.getDescription(), postBody.getPostedBy(), topics));
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Post saved successfully.");
-            response.setData(getPostResponse(post, new ArrayList<>()));
+            response.setData(getPostResponse(post, new ArrayList<>(), new ArrayList<>()));
         } catch (AlreadyExitsException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(e.getCode());
@@ -171,15 +182,55 @@ public class PostController {
             return ResponseEntity.badRequest().body(response);
     }
 
-    private PostResponse getPostResponse(Post post, List<Comment> comments) {
+    @GetMapping("/like/{userId}/{postId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response> likePost(@PathVariable("userId") Long userId, @PathVariable("postId") long postId) {
+
+        Response response = new Response();
+        response.setCode(ResponseStatus.SUCCESS.value());
+        response.setMessage("Liked successfully!");
+
+        try {
+
+            Optional<Post> postOptional = postService.findById(postId);
+
+            if (postOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Post not found!");
+
+            if (userService.findById(userId).isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+
+            Like like = new Like();
+            like.setLikedBy(userId);
+            like.setPost(postOptional.get());
+
+            likeService.save(like);
+
+        } catch (AlreadyExitsException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        } catch (NotFoundException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        if (!response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok(response);
+    }
+
+    private PostResponse getPostResponse(Post post, List<Comment> comments, List<Like> likes) {
         PostResponse response = modelMapper.map(post, PostResponse.class);
         response.setComments(comments);
+        response.setLikes(likes);
         return response;
     }
 
     private List<PostResponse> getPostListResponse(List<Post> posts) {
         List<PostResponse> responses = new ArrayList<>();
-        posts.forEach(post -> responses.add(getPostResponse(post, new ArrayList<>())));
+        posts.forEach(post -> responses.add(getPostResponse(post, new ArrayList<>(), new ArrayList<>())));
         return responses;
     }
 }

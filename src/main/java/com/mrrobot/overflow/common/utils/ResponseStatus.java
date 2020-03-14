@@ -7,7 +7,8 @@ public enum ResponseStatus {
     ALREADY_LIKED("1408", "Already Liked"),
     BAD_CREDENTIALS("1401", "Bad credentials"),
     NOT_FOUND("1404", "Not found"),
-    AUTH_ERROR("1111", "Auth error");
+    AUTH_ERROR("1111", "Auth error"),
+    USER_NOT_APPROVED("2222", "User not approved");
 
     private final String value;
     private final String description;

@@ -1,6 +1,9 @@
 package com.mrrobot.overflow.security.controller;
 
+import com.mrrobot.overflow.common.exception.NotFoundException;
+import com.mrrobot.overflow.common.exception.UserLoginException;
 import com.mrrobot.overflow.common.model.Response;
+import com.mrrobot.overflow.common.service.CommonService;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.entity.Role;
@@ -53,6 +56,9 @@ public class AuthController {
     @Autowired
     JwtProvider jwtProvider;
 
+    @Autowired
+    CommonService commonService;
+
     Logger log = LoggerFactory.getLogger("debug-logger");
 
     @PostMapping("/login")
@@ -63,9 +69,11 @@ public class AuthController {
         Response response = new Response();
 
         try {
+
+            commonService.checkUser(loginBody.getUsername());
+
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginBody.getUsername(), loginBody.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(loginBody.getUsername(), loginBody.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -82,6 +90,14 @@ public class AuthController {
         } catch (AuthenticationException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(ResponseStatus.AUTH_ERROR.value());
+            response.setMessage(e.getMessage());
+        } catch (NotFoundException e) {
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        } catch (UserLoginException e) {
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
             response.setMessage(e.getMessage());
         }
 

@@ -4,16 +4,10 @@ import com.mrrobot.overflow.common.exception.AlreadyExitsException;
 import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
-import com.mrrobot.overflow.post.entity.Comment;
-import com.mrrobot.overflow.post.entity.Like;
-import com.mrrobot.overflow.post.entity.Post;
-import com.mrrobot.overflow.post.entity.Topic;
+import com.mrrobot.overflow.post.entity.*;
 import com.mrrobot.overflow.post.model.PostBody;
 import com.mrrobot.overflow.post.model.PostResponse;
-import com.mrrobot.overflow.post.service.CommentService;
-import com.mrrobot.overflow.post.service.LikeService;
-import com.mrrobot.overflow.post.service.PostService;
-import com.mrrobot.overflow.post.service.TopicService;
+import com.mrrobot.overflow.post.service.*;
 import com.mrrobot.overflow.profile.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -41,6 +35,9 @@ public class PostController {
 
     @Autowired
     LikeService likeService;
+
+    @Autowired
+    VoteService voteService;
 
     @Autowired
     ModelMapper modelMapper;
@@ -205,6 +202,50 @@ public class PostController {
             like.setPost(postOptional.get());
 
             likeService.save(like);
+
+        } catch (AlreadyExitsException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        } catch (NotFoundException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        if (!response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/vote/{userId}/{postId}/{isUpVote}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response> votePost(@PathVariable("userId") Long userId, @PathVariable("postId") long postId,
+                                             @PathVariable("isUpVote") int isUpVote) {
+
+        Response response = new Response();
+        response.setCode(ResponseStatus.SUCCESS.value());
+        response.setMessage("Voted successfully!");
+
+        try {
+
+            Optional<Post> postOptional = postService.findById(postId);
+
+            if (postOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Post not found!");
+
+            if (userService.findById(userId).isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+
+            Vote vote = new Vote();
+            vote.setVoteBy(userId);
+            if (isUpVote == 1)
+                vote.setIsUpVote(true);
+            else
+                vote.setIsUpVote(false);
+            vote.setPost(postOptional.get());
+
+            voteService.save(vote);
 
         } catch (AlreadyExitsException e) {
             log.error("ErrorMessage={}", e.getMessage());

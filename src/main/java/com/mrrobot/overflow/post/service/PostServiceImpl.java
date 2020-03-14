@@ -32,7 +32,7 @@ public class PostServiceImpl implements PostService{
 
         if (postRepository.findByTitle(post.getTitle()).isPresent()) {
 
-            throw new AlreadyExitsException(ResponseStatus.ALREADY_EXITS.value(), post.getTitle() + " already exits!");
+            throw new AlreadyExitsException(ResponseStatus.ALREADY_EXITS.value(), "Post already exits!");
         }
 
         return postRepository.save(post);
@@ -40,6 +40,12 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Post update(Post post) throws NotFoundException {
-        return new Post();
+
+        if (postRepository.findById(post.getId()).isEmpty()) {
+
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Post not found!");
+        }
+
+        return postRepository.save(post);
     }
 }

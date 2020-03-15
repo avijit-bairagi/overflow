@@ -18,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mrrobot.overflow.post.entity.Group;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
@@ -34,10 +35,13 @@ import org.hibernate.annotations.NaturalId;
 @Getter
 @Setter
 public class User{
+
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @NotBlank
     @Size(min=3, max = 50)
     private String name;
@@ -61,12 +65,16 @@ public class User{
     @NotBlank
     private boolean isApproved;
 
-
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<Group> groups = new HashSet<>();
 
     public User() {}
 

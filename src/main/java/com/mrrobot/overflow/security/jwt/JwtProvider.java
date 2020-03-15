@@ -67,7 +67,7 @@ public class JwtProvider {
                 .getBody().getSubject();
     }
 
-    public UserData getUserDataToken(String token) {
+    public UserData getUserData(String token) {
 
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token.substring(6)).getBody();
 

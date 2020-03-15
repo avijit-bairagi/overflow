@@ -58,14 +58,6 @@ public class ProfileController {
         return ResponseEntity.badRequest().body(response);
     }
 
-    @GetMapping("/token")
-    public ResponseEntity<UserData> get(@RequestHeader(name = "Authorization") String token) {
-
-        UserData userData = jwtProvider.getUserDataToken(token);
-
-        return ResponseEntity.ok().body(userData);
-    }
-
     private ProfileResponse getProfileData(User user, Profile profile) {
 
         ProfileResponse response = modelMapper.map(profile, ProfileResponse.class);

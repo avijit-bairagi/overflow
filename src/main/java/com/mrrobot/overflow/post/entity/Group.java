@@ -1,5 +1,6 @@
 package com.mrrobot.overflow.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mrrobot.overflow.profile.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,21 +12,22 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Entity(name = "rooms")
+@Entity(name = "pgroups")
 public class Group {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
     String description;
     Long createdBy;
-    Date createdDate;
+    Date createdDate = new Date();
     Date updatedDate;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "room_members",
-            joinColumns = @JoinColumn(name = "room_id"),
+    @JoinTable(name = "pgroup_member",
+            joinColumns = @JoinColumn(name = "pgroup_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>();
 }

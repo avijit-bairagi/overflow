@@ -8,6 +8,7 @@ import com.mrrobot.overflow.post.entity.Post;
 import com.mrrobot.overflow.post.model.CommentBody;
 import com.mrrobot.overflow.post.service.CommentService;
 import com.mrrobot.overflow.post.service.PostService;
+import com.mrrobot.overflow.security.jwt.JwtProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,14 @@ public class CommentController {
     @Autowired
     PostService postService;
 
+    @Autowired
+    JwtProvider jwtProvider;
+
     Logger log = LoggerFactory.getLogger("debug-logger");
 
     @PostMapping("/{postId}")
-    public ResponseEntity<Response> save(@NotNull @RequestBody CommentBody commentBody, @PathVariable("postId") Long postId) {
+    public ResponseEntity<Response> save(@RequestHeader(name = "Authorization") String token, @NotNull @RequestBody CommentBody commentBody,
+                                         @PathVariable("postId") Long postId) {
         Response response = new Response();
 
         Optional<Post> postOptional = postService.findById(postId);
@@ -44,7 +49,7 @@ public class CommentController {
 
         Comment comment = new Comment();
         comment.setDescription(commentBody.getDescription());
-        comment.setCommentedBy(commentBody.getCommentedBy());
+        comment.setCommentedBy(jwtProvider.getUserData(token).getUserId());
         comment.setPost(postOptional.get());
 
         try {

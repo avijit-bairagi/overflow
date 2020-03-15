@@ -8,5 +8,4 @@ import lombok.Setter;
 public class CommentBody {
 
     String description;
-    Long commentedBy;
 }

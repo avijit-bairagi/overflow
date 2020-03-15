@@ -12,5 +12,4 @@ public class PostBody {
     private String title;
     private String description;
     private Set<String> topics;
-    private Long postedBy;
 }

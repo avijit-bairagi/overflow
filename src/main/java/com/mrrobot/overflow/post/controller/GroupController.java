@@ -7,7 +7,7 @@ import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Group;
 import com.mrrobot.overflow.post.model.GroupBody;
 import com.mrrobot.overflow.post.service.GroupService;
-import com.mrrobot.overflow.security.jwt.JwtProvider;
+import com.mrrobot.overflow.profile.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +25,19 @@ public class GroupController {
     GroupService groupService;
 
     @Autowired
-    JwtProvider jwtProvider;
+    UserService userService;
 
     Logger log = LoggerFactory.getLogger("debug-logger");
 
     @PostMapping
-    public ResponseEntity<Response> save(@RequestHeader(name = "Authorization") String token, @NotNull @RequestBody GroupBody groupBody) {
+    public ResponseEntity<Response> save(@NotNull @RequestBody GroupBody groupBody) {
 
         Response response = new Response();
 
         Group group = new Group();
         group.setName(groupBody.getName());
         group.setDescription(groupBody.getDescription());
-        group.setCreatedBy(jwtProvider.getUserData(token).getUserId());
+        group.setCreatedBy(userService.getUserData().getUserId());
 
         try {
             Group groupData = groupService.save(group);
@@ -60,13 +60,13 @@ public class GroupController {
     }
 
     @GetMapping("/subscribe/{groupId}")
-    public ResponseEntity<Response> subscribe(@RequestHeader(name = "Authorization") String token, @PathVariable("groupId") Long groupId) {
+    public ResponseEntity<Response> subscribe(@PathVariable("groupId") Long groupId) {
 
         Response response = new Response();
 
         try {
 
-            groupService.subscribe(jwtProvider.getUserData(token).getUserId(), groupId);
+            groupService.subscribe(userService.getUserData().getUserId(), groupId);
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Subscribed successfully!");
 

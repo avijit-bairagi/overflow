@@ -171,6 +171,15 @@ public class PostController {
 
             Post postData = postService.save(post);
 
+            topics.forEach(topic -> {
+                topic.setHit(topic.getHit() + 1);
+                try {
+                    topicService.update(topic);
+                } catch (NotFoundException e) {
+                    return;
+                }
+            });
+
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Post saved successfully.");
             response.setData(getPostResponse(postData, new ArrayList<>(), new ArrayList<>()));

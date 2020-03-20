@@ -15,4 +15,6 @@ public interface TopicService {
     Topic save(Topic topic) throws AlreadyExitsException;
 
     Topic update(Topic topic) throws NotFoundException;
+
+    List<Topic> findAllHotTopics();
 }

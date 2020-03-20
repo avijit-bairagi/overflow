@@ -17,6 +17,7 @@ security:
 post:
   rank:
     defaultPoint: 5.0
+  defaultLimit: 2
 
 server:
   port: 8999

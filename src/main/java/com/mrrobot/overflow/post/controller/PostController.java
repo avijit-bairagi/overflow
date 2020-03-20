@@ -88,10 +88,10 @@ public class PostController {
 
     @GetMapping("/recent")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Response> getRecentPosts(@RequestParam(required = false, defaultValue = "0", name = "limit") String limit) {
+    public ResponseEntity<Response> getRecentPosts(@RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
 
-        List<Post> posts = postService.findAll();
+        List<Post> posts = postService.findResent(Integer.parseInt(page));
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");
@@ -102,10 +102,10 @@ public class PostController {
 
     @GetMapping("/hot")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Response> getHotPosts(@RequestParam(required = false, defaultValue = "0", name = "limit") String limit) {
+    public ResponseEntity<Response> getHotPosts(@RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
 
-        List<Post> posts = postService.findAll();
+        List<Post> posts = postService.findByHotTopics(Integer.valueOf(page));
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");
@@ -165,7 +165,7 @@ public class PostController {
 
             post.setGroupId(postBody.getGroupId());
 
-            if(post.getGroupId() != 0){
+            if (post.getGroupId() != 0) {
                 groupService.findById(post.getGroupId());
             }
 

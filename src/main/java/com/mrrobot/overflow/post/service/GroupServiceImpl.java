@@ -62,7 +62,7 @@ public class GroupServiceImpl implements GroupService {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty())
-            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Group not found!");
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
 
         Group group = groupOptional.get();
 
@@ -70,6 +70,29 @@ public class GroupServiceImpl implements GroupService {
             throw new AlreadyExitsException(ResponseStatus.ALREADY_EXITS.value(), "Already subscribed!");
 
         group.getUsers().add(userOptional.get());
+
+        groupRepository.save(group);
+    }
+
+    @Override
+    public void unsubscribe(Long userId, Long groupId) throws NotFoundException {
+
+        Optional<Group> groupOptional = groupRepository.findById(groupId);
+
+        if (groupOptional.isEmpty())
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Group not found!");
+
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty())
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+
+        Group group = groupOptional.get();
+
+        if (group.getUsers().stream().noneMatch(user -> user.getId() == userId))
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User has not subscribed this group!");
+
+        group.getUsers().remove(userOptional.get());
 
         groupRepository.save(group);
     }

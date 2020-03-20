@@ -17,4 +17,6 @@ public interface GroupService {
     Group update(Group group) throws NotFoundException;
 
     void subscribe(Long userId, Long groupId) throws NotFoundException, AlreadyExitsException;
+
+    void unsubscribe(Long userId, Long groupId) throws NotFoundException;
 }

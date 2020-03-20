@@ -45,6 +45,9 @@ public class PostController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    GroupService groupService;
+
     Logger log = LoggerFactory.getLogger("debug-logger");
 
     @GetMapping
@@ -158,17 +161,31 @@ public class PostController {
                 topics.add(topic);
             });
 
-            Post post = postService.save(new Post(postBody.getTitle(), postBody.getDescription(),
-                    userService.getUserData().getUserId(), topics));
+            Post post = new Post(postBody.getTitle(), postBody.getDescription(), userService.getUserData().getUserId(), topics);
+
+            post.setGroupId(postBody.getGroupId());
+
+            if(post.getGroupId() != 0){
+                groupService.findById(post.getGroupId());
+            }
+
+            Post postData = postService.save(post);
+
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Post saved successfully.");
-            response.setData(getPostResponse(post, new ArrayList<>(), new ArrayList<>()));
+            response.setData(getPostResponse(postData, new ArrayList<>(), new ArrayList<>()));
+
         } catch (AlreadyExitsException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(e.getCode());
             response.setMessage(e.getMessage());
-        } catch (RuntimeException e) {
 
+        } catch (RuntimeException e) {
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(ResponseStatus.NOT_FOUND.value());
+            response.setMessage(e.getMessage());
+
+        } catch (NotFoundException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(ResponseStatus.NOT_FOUND.value());
             response.setMessage(e.getMessage());

@@ -88,6 +88,30 @@ public class GroupController {
 
     }
 
+    @GetMapping("/unsubscribe/{groupId}")
+    public ResponseEntity<Response> unsubscribe(@PathVariable("groupId") Long groupId) {
+
+        Response response = new Response();
+
+        try {
+
+            groupService.unsubscribe(userService.getUserData().getUserId(), groupId);
+            response.setCode(ResponseStatus.SUCCESS.value());
+            response.setMessage("Unsubscribed successfully!");
+
+        } catch (NotFoundException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            return ResponseEntity.ok().body(response);
+        else
+            return ResponseEntity.badRequest().body(response);
+
+    }
+
     @GetMapping()
     public ResponseEntity<Response> getAll() {
 

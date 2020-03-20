@@ -232,6 +232,11 @@ public class PostController {
 
             likeService.save(like);
 
+            Post post = postOptional.get();
+            post.setHit(post.getHit() + 1);
+
+            postService.update(post);
+
         } catch (AlreadyExitsException e) {
             log.error("ErrorMessage={}", e.getMessage());
             response.setCode(e.getCode());

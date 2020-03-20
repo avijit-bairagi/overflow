@@ -9,7 +9,6 @@ import com.mrrobot.overflow.post.model.PostBody;
 import com.mrrobot.overflow.post.model.PostResponse;
 import com.mrrobot.overflow.post.service.*;
 import com.mrrobot.overflow.profile.service.UserService;
-import com.mrrobot.overflow.security.jwt.JwtProvider;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +44,6 @@ public class PostController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    JwtProvider jwtProvider;
 
     Logger log = LoggerFactory.getLogger("debug-logger");
 
@@ -148,7 +144,7 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Response> save(@RequestHeader(name = "Authorization") String token, @NotNull @RequestBody PostBody postBody) {
+    public ResponseEntity<Response> save(@NotNull @RequestBody PostBody postBody) {
         Response response = new Response();
 
         try {
@@ -163,7 +159,7 @@ public class PostController {
             });
 
             Post post = postService.save(new Post(postBody.getTitle(), postBody.getDescription(),
-                    jwtProvider.getUserData(token).getUserId(), topics));
+                    userService.getUserData().getUserId(), topics));
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Post saved successfully.");
             response.setData(getPostResponse(post, new ArrayList<>(), new ArrayList<>()));
@@ -186,7 +182,7 @@ public class PostController {
 
     @GetMapping("/like/{postId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> likePost(@RequestHeader(name = "Authorization") String token, @PathVariable("postId") long postId) {
+    public ResponseEntity<Response> likePost(@PathVariable("postId") long postId) {
 
         Response response = new Response();
         response.setCode(ResponseStatus.SUCCESS.value());
@@ -194,7 +190,7 @@ public class PostController {
 
         try {
 
-            Long userId = jwtProvider.getUserData(token).getUserId();
+            Long userId = userService.getUserData().getUserId();
 
             Optional<Post> postOptional = postService.findById(postId);
 
@@ -227,8 +223,7 @@ public class PostController {
 
     @GetMapping("/vote/{postId}/{isUpVote}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> votePost(@RequestHeader(name = "Authorization") String token, @PathVariable("postId") long postId,
-                                             @PathVariable("isUpVote") int isUpVote) {
+    public ResponseEntity<Response> votePost(@PathVariable("postId") long postId, @PathVariable("isUpVote") int isUpVote) {
 
         Response response = new Response();
         response.setCode(ResponseStatus.SUCCESS.value());
@@ -236,7 +231,7 @@ public class PostController {
 
         try {
 
-            Long userId = jwtProvider.getUserData(token).getUserId();
+            Long userId = userService.getUserData().getUserId();
 
             Optional<Post> postOptional = postService.findById(postId);
 

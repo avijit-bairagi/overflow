@@ -6,6 +6,8 @@ import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Topic;
 import com.mrrobot.overflow.post.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,8 +16,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Configuration
 @Service
 public class TopicServiceImpl implements TopicService {
+
+    @Value("${post.topic.defaultHotLimit}")
+    int limit;
 
     @Autowired
     TopicRepository topicRepository;
@@ -55,7 +61,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public List<Topic> findAllHotTopics() {
 
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("hit").descending());
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("hit").descending());
 
         return topicRepository.findAll(pageable).getContent();
     }

@@ -18,6 +18,8 @@ post:
   rank:
     defaultPoint: 5.0
   defaultLimit: 2
+  topic:
+    defaultHotLimit: 2
 
 server:
   port: 8999

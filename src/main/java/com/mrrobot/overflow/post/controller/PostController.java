@@ -37,7 +37,7 @@ public class PostController {
     LikeService likeService;
 
     @Autowired
-    VoteService voteService;
+    PostVoteService voteService;
 
     @Autowired
     ModelMapper modelMapper;
@@ -272,7 +272,7 @@ public class PostController {
             if (userService.findById(userId).isEmpty())
                 throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
 
-            Vote vote = new Vote();
+            PostVote vote = new PostVote();
             vote.setVoteBy(userId);
             if (isUpVote == 1)
                 vote.setIsUpVote(true);

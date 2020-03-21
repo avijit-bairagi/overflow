@@ -4,17 +4,17 @@ import com.mrrobot.overflow.common.exception.AlreadyExitsException;
 import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Post;
-import com.mrrobot.overflow.post.entity.Vote;
-import com.mrrobot.overflow.post.repository.VoteRepository;
+import com.mrrobot.overflow.post.entity.PostVote;
+import com.mrrobot.overflow.post.repository.PostVoteRepository;
 import com.mrrobot.overflow.rank.RankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class VoteServiceImpl implements VoteService {
+public class PostVoteServiceImpl implements PostVoteService {
 
     @Autowired
-    VoteRepository voteRepository;
+    PostVoteRepository voteRepository;
 
     @Autowired
     RankService rankService;
@@ -23,7 +23,7 @@ public class VoteServiceImpl implements VoteService {
     PostService postService;
 
     @Override
-    public Vote save(Vote vote) throws AlreadyExitsException, NotFoundException {
+    public PostVote save(PostVote vote) throws AlreadyExitsException, NotFoundException {
 
         if (voteRepository.findByVoteByAndPostId(vote.getVoteBy(), vote.getPost().getId()).isPresent()) {
             throw new AlreadyExitsException(ResponseStatus.ALREADY_LIKED.value(), "Already voted!");

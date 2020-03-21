@@ -7,7 +7,6 @@ import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Comment;
 import com.mrrobot.overflow.post.entity.CommentVote;
 import com.mrrobot.overflow.post.entity.Post;
-import com.mrrobot.overflow.post.entity.Vote;
 import com.mrrobot.overflow.post.model.CommentBody;
 import com.mrrobot.overflow.post.service.CommentService;
 import com.mrrobot.overflow.post.service.CommentVoteService;

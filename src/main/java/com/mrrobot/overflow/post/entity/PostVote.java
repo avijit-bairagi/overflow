@@ -8,8 +8,8 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@Entity(name = "votes")
-public class Vote {
+@Entity(name = "pvotes")
+public class PostVote {
 
     @JsonIgnore
     @Id

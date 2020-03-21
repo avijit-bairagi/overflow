@@ -1,18 +1,23 @@
 package com.mrrobot.overflow.post.controller;
 
 import com.mrrobot.overflow.common.exception.AlreadyExitsException;
+import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Comment;
+import com.mrrobot.overflow.post.entity.CommentVote;
 import com.mrrobot.overflow.post.entity.Post;
+import com.mrrobot.overflow.post.entity.Vote;
 import com.mrrobot.overflow.post.model.CommentBody;
 import com.mrrobot.overflow.post.service.CommentService;
+import com.mrrobot.overflow.post.service.CommentVoteService;
 import com.mrrobot.overflow.post.service.PostService;
 import com.mrrobot.overflow.profile.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -30,6 +35,9 @@ public class CommentController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    CommentVoteService voteService;
 
     Logger log = LoggerFactory.getLogger("debug-logger");
 
@@ -68,6 +76,52 @@ public class CommentController {
             return ResponseEntity.ok().body(response);
         else
             return ResponseEntity.badRequest().body(response);
+    }
+
+    @GetMapping("/vote/{commentId}/{isUpVote}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response> votePost(@PathVariable("commentId") long postId, @PathVariable("isUpVote") int isUpVote) {
+
+        Response response = new Response();
+
+        try {
+
+            Long userId = userService.getUserData().getUserId();
+
+            Optional<Comment> commentOptional = commentService.findById(postId);
+
+            if (commentOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Comment not found!");
+
+            if (userService.findById(userId).isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+
+            CommentVote vote = new CommentVote();
+            vote.setVoteBy(userId);
+            if (isUpVote == 1)
+                vote.setIsUpVote(true);
+            else
+                vote.setIsUpVote(false);
+            vote.setComment(commentOptional.get());
+
+            voteService.save(vote);
+
+            response.setCode(ResponseStatus.SUCCESS.value());
+            response.setMessage("Voted successfully!");
+
+        } catch (AlreadyExitsException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        } catch (NotFoundException e) {
+            log.error("ErrorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        if (!response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok(response);
     }
 
 }

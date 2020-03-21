@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface CommentService {
 
+    Optional<Comment> findById(Long id);
+
     Optional<Comment> findByDescription(String description);
 
     Comment save(Comment comment) throws AlreadyExitsException;

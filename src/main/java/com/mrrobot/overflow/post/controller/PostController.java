@@ -161,12 +161,17 @@ public class PostController {
                 topics.add(topic);
             });
 
-            Post post = new Post(postBody.getTitle(), postBody.getDescription(), userService.getUserData().getUserId(), topics);
+            Long userId = userService.getUserData().getUserId();
+
+            Post post = new Post(postBody.getTitle(), postBody.getDescription(), userId, topics);
 
             post.setGroupId(postBody.getGroupId());
 
             if (post.getGroupId() != 0) {
-                groupService.findById(post.getGroupId());
+                Group group = groupService.findById(post.getGroupId());
+                if (!group.getUsers().stream().anyMatch(user -> user.getId() == userId)) {
+                    throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User is not subscribed in this group!");
+                }
             }
 
             Post postData = postService.save(post);

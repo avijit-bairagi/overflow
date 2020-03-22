@@ -12,15 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("profile")
-public class ProfileController {
+@RequestMapping("user")
+public class UserController {
 
     @Autowired
     ProfileService profileService;
@@ -31,29 +32,31 @@ public class ProfileController {
     @Autowired
     ModelMapper modelMapper;
 
-    @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> getProfile(@PathVariable("userId") Long userId) {
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response> getAll() {
 
         Response response = new Response();
 
-        Optional<User> userOptional = userService.findById(userId);
+        List<ProfileResponse> responseList = new ArrayList<>();
 
-        if (userOptional.isPresent()) {
-            Optional<Profile> profileOptional = profileService.findByUserId(userId);
+        List<User> users = userService.findAll();
 
-            if (profileOptional.isPresent()) {
-                response.setCode(ResponseStatus.SUCCESS.value());
-                response.setMessage("User data fetch successfully!");
-                response.setData(getProfileData(userOptional.get(), profileOptional.get()));
+        users.forEach(user -> {
 
-                return ResponseEntity.ok().body(response);
-            }
-        }
+            Optional<Profile> profileOptional = profileService.findByUserId(user.getId());
 
-        response.setCode(ResponseStatus.NOT_FOUND.value());
-        response.setMessage("User data not found!");
-        return ResponseEntity.badRequest().body(response);
+            if (profileOptional.isPresent())
+                responseList.add(getProfileData(user, profileOptional.get()));
+
+        });
+
+
+        response.setCode(ResponseStatus.SUCCESS.value());
+        response.setMessage("User(s) fetched successfully!");
+        response.setData(responseList);
+
+        return ResponseEntity.ok().body(response);
     }
 
     private ProfileResponse getProfileData(User user, Profile profile) {

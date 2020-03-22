@@ -103,9 +103,12 @@ public class PostController {
     @GetMapping("/hot")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> getHotPosts(@RequestParam(required = false, defaultValue = "0", name = "page") String page) {
+
         Response response = new Response();
 
-        List<Post> posts = postService.findByHotTopics(Integer.valueOf(page));
+        List<Topic> topics = topicService.findAllHotTopics();
+
+        List<Post> posts = postService.findByTopics(topics, Integer.valueOf(page));
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");
@@ -117,10 +120,10 @@ public class PostController {
     @GetMapping("/query/{query}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> getPostsByQuery(@PathVariable("query") String query,
-                                                    @RequestParam(required = false, defaultValue = "0", name = "limit") String limit) {
+                                                    @RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
 
-        List<Post> posts = postService.findAll();
+        List<Post> posts = postService.findByQuery(query, Integer.parseInt(page));
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");
@@ -133,10 +136,12 @@ public class PostController {
     @GetMapping("/topic/{topic}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> getPostsByTopic(@PathVariable("topic") String topic,
-                                                    @RequestParam(required = false, defaultValue = "0", name = "limit") String limit) {
+                                                    @RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
 
-        List<Post> posts = postService.findAll();
+        List<Topic> topics = topicService.findByTopicName(topic);
+
+        List<Post> posts = postService.findByTopics(topics, Integer.valueOf(page));
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");

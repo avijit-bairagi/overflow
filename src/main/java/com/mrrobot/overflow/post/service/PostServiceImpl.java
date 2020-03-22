@@ -54,13 +54,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findByHotTopics(int page) {
-
-        List<Topic> topics = topicService.findAllHotTopics();
+    public List<Post> findByQuery(String query, int page) {
 
         Pageable pageable = PageRequest.of(page, defaultPostLimit, Sort.by("createdDate").descending());
 
-        return postRepository.findByTopicsIn(topics,pageable);
+        return postRepository.findByTitleContaining(query, pageable);
+    }
+
+    @Override
+    public List<Post> findByTopics(List<Topic> topics, int page) {
+
+        Pageable pageable = PageRequest.of(page, defaultPostLimit, Sort.by("createdDate").descending());
+
+        return postRepository.findByTopicsIn(topics, pageable);
     }
 
     @Override

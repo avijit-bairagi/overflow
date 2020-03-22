@@ -21,7 +21,7 @@ import java.util.Optional;
 public class TopicServiceImpl implements TopicService {
 
     @Value("${post.topic.defaultHotLimit}")
-    int limit;
+    int defaultHotLimit;
 
     @Autowired
     TopicRepository topicRepository;
@@ -61,8 +61,16 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public List<Topic> findAllHotTopics() {
 
-        Pageable pageable = PageRequest.of(0, limit, Sort.by("hit").descending());
+        Pageable pageable = PageRequest.of(0, defaultHotLimit, Sort.by("hit").descending());
 
         return topicRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public List<Topic> findByTopicName(String name) {
+
+        Pageable pageable = PageRequest.of(0, defaultHotLimit, Sort.by("hit").descending());
+
+        return topicRepository.findByNameContaining(name, pageable);
     }
 }

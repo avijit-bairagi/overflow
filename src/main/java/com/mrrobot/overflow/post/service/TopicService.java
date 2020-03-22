@@ -17,4 +17,6 @@ public interface TopicService {
     Topic update(Topic topic) throws NotFoundException;
 
     List<Topic> findAllHotTopics();
+
+    List<Topic> findByTopicName(String name);
 }

@@ -12,7 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
+
     Optional<Post> findByTitle(String name);
+
+    List<Post> findByTitleContaining(String title, Pageable pageable);
 
     List<Post> findByTopicsIn(Collection<Topic> topics, Pageable pageable);
 }

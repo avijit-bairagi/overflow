@@ -44,15 +44,19 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
         commentService.update(comment);
 
-        Optional<Profile> profileOptional = profileService.findByUserId(vote.getComment().getCommentedBy());
+        if (vote.getVoteBy() != vote.getComment().getCommentedBy()) {
 
-        if (profileOptional.isEmpty())
-            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
+            Optional<Profile> profileOptional = profileService.findByUserId(vote.getComment().getCommentedBy());
 
-        Profile profile = profileOptional.get();
-        profile.setPoint(profile.getPoint() + point);
+            if (profileOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
 
-        profileService.update(profile);
+            Profile profile = profileOptional.get();
+            profile.setPoint(profile.getPoint() + point);
+
+            profileService.update(profile);
+
+        }
 
         return voteRepository.save(vote);
     }

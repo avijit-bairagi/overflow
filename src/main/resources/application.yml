@@ -20,6 +20,8 @@ post:
   defaultLimit: 2
   topic:
     defaultHotLimit: 2
+  defaultPostPoint: 5
+  defaultCommentPoint: 2
 
 server:
   port: 8999

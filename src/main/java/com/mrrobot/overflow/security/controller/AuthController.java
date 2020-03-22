@@ -8,6 +8,7 @@ import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.entity.Role;
 import com.mrrobot.overflow.profile.entity.User;
+import com.mrrobot.overflow.profile.model.ChangePasswordBody;
 import com.mrrobot.overflow.profile.service.ProfileService;
 import com.mrrobot.overflow.profile.service.RoleService;
 import com.mrrobot.overflow.profile.service.UserService;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -169,6 +172,43 @@ public class AuthController {
         }
 
         log.debug("registerUser(): end");
+
+        if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            return ResponseEntity.ok().body(response);
+        else
+            return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping("/change-password")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response> changePassword(@Valid @RequestBody ChangePasswordBody body) {
+
+        log.debug("changePassword(): start");
+
+        Response response = new Response();
+
+        try {
+            Long userId = userService.getUserData().getUserId();
+
+            Optional<User> userOptional = userService.findById(userId);
+            if(userOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+
+            User user = userOptional.get();
+            user.setPassword(encoder.encode(body.getPassword()));
+            userService.update(user);
+
+            response.setCode(ResponseStatus.SUCCESS.value());
+            response.setMessage("Password changed successfully.");
+
+        } catch (NotFoundException e) {
+
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        log.debug("changePassword(): end");
 
         if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
             return ResponseEntity.ok().body(response);

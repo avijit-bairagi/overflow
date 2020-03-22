@@ -1,5 +1,6 @@
 package com.mrrobot.overflow.profile.service;
 
+import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.security.model.UserData;
 
@@ -16,6 +17,8 @@ public interface UserService {
     Boolean existsByEmail(String email);
 
     User save(User user);
+
+    User update(User user) throws NotFoundException;
 
     UserData getUserData();
 }

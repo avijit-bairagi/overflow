@@ -1,6 +1,8 @@
 package com.mrrobot.overflow.profile.service;
 
+import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.utils.Constants;
+import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.profile.repository.UserRepository;
 import com.mrrobot.overflow.security.jwt.JwtProvider;
@@ -46,6 +48,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User update(User user) throws NotFoundException {
+
+        if (userRepository.findById(user.getId()).isEmpty()) {
+
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+        }
+
         return userRepository.save(user);
     }
 

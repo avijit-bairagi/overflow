@@ -9,13 +9,13 @@ import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.entity.Role;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.profile.model.ChangePasswordBody;
+import com.mrrobot.overflow.profile.model.LoginBody;
+import com.mrrobot.overflow.profile.model.RegistrationBody;
 import com.mrrobot.overflow.profile.service.ProfileService;
 import com.mrrobot.overflow.profile.service.RoleService;
 import com.mrrobot.overflow.profile.service.UserService;
 import com.mrrobot.overflow.security.jwt.JwtProvider;
 import com.mrrobot.overflow.security.model.JwtResponse;
-import com.mrrobot.overflow.profile.model.LoginBody;
-import com.mrrobot.overflow.profile.model.RegistrationBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,11 +191,15 @@ public class AuthController {
             Long userId = userService.getUserData().getUserId();
 
             Optional<User> userOptional = userService.findById(userId);
-            if(userOptional.isEmpty())
+            if (userOptional.isEmpty())
                 throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
 
             User user = userOptional.get();
-            user.setPassword(encoder.encode(body.getPassword()));
+
+            if (!encoder.matches(body.getOldPassword(), user.getPassword()))
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Old password does not match!");
+
+            user.setPassword(encoder.encode(body.getNewPassword()));
             userService.update(user);
 
             response.setCode(ResponseStatus.SUCCESS.value());

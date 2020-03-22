@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class ChangePasswordBody {
 
-    private String password;
+    private String oldPassword;
+    private String newPassword;
 }

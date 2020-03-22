@@ -46,15 +46,18 @@ public class CommentServiceImpl implements CommentService {
             throw new AlreadyExitsException(ResponseStatus.ALREADY_EXITS.value(), "Comment already exits!");
         }
 
-        Optional<Profile> profileOptional = profileService.findByUserId(comment.getCommentedBy());
+        if (comment.getCommentedBy() != comment.getPost().getPostedBy()) {
 
-        if (profileOptional.isEmpty())
-            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
+            Optional<Profile> profileOptional = profileService.findByUserId(comment.getCommentedBy());
 
-        Profile profile = profileOptional.get();
-        profile.setPoint(profile.getPoint() + defaultCommentPoint);
+            if (profileOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
 
-        profileService.update(profile);
+            Profile profile = profileOptional.get();
+            profile.setPoint(profile.getPoint() + defaultCommentPoint);
+
+            profileService.update(profile);
+        }
 
         return commentRepository.save(comment);
     }

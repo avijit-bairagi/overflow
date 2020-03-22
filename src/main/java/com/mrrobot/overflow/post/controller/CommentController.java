@@ -69,6 +69,10 @@ public class CommentController {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(ResponseStatus.ALREADY_EXITS.value());
             response.setMessage("Post already exits!");
+        } catch (NotFoundException e) {
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
         }
 
         if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))

@@ -13,7 +13,7 @@ public interface CommentService {
 
     Optional<Comment> findByDescription(String description);
 
-    Comment save(Comment comment) throws AlreadyExitsException;
+    Comment save(Comment comment) throws AlreadyExitsException, NotFoundException;
 
     Comment update(Comment comment) throws NotFoundException;
 

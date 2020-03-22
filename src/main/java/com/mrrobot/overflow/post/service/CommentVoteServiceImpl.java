@@ -6,9 +6,13 @@ import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Comment;
 import com.mrrobot.overflow.post.entity.CommentVote;
 import com.mrrobot.overflow.post.repository.CommentVoteRepository;
+import com.mrrobot.overflow.profile.entity.Profile;
+import com.mrrobot.overflow.profile.service.ProfileService;
 import com.mrrobot.overflow.rank.RankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CommentVoteServiceImpl implements CommentVoteService {
@@ -21,6 +25,9 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    ProfileService profileService;
 
     @Override
     public CommentVote save(CommentVote vote) throws AlreadyExitsException, NotFoundException {
@@ -36,6 +43,16 @@ public class CommentVoteServiceImpl implements CommentVoteService {
         comment.setPoint(point);
 
         commentService.update(comment);
+
+        Optional<Profile> profileOptional = profileService.findByUserId(vote.getComment().getCommentedBy());
+
+        if (profileOptional.isEmpty())
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
+
+        Profile profile = profileOptional.get();
+        profile.setPoint(profile.getPoint() + point);
+
+        profileService.update(profile);
 
         return voteRepository.save(vote);
     }

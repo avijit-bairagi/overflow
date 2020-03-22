@@ -20,7 +20,7 @@ public interface PostService {
 
     List<Post> findByTopics(List<Topic> topics, int page);
 
-    Post save(Post post) throws AlreadyExitsException;
+    Post save(Post post) throws AlreadyExitsException, NotFoundException;
 
     Post update(Post post) throws NotFoundException;
 }

@@ -44,15 +44,18 @@ public class PostVoteServiceImpl implements PostVoteService {
 
         postService.update(post);
 
-        Optional<Profile> profileOptional = profileService.findByUserId(vote.getPost().getPostedBy());
+        if (vote.getVoteBy() != vote.getPost().getPostedBy()) {
 
-        if (profileOptional.isEmpty())
-            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
+            Optional<Profile> profileOptional = profileService.findByUserId(vote.getPost().getPostedBy());
 
-        Profile profile = profileOptional.get();
-        profile.setPoint(profile.getPoint() + point);
+            if (profileOptional.isEmpty())
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
 
-        profileService.update(profile);
+            Profile profile = profileOptional.get();
+            profile.setPoint(profile.getPoint() + point);
+
+            profileService.update(profile);
+        }
 
         return voteRepository.save(vote);
     }

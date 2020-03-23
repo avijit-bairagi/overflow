@@ -18,6 +18,7 @@ public class ProfileResponse {
     private String phoneNo;
     private Integer level;
     private Double point;
+    private Integer position;
     private Boolean isOpenForJob;
     private Date createdDate;
     private Date updatedDate;

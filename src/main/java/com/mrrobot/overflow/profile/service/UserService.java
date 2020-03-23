@@ -1,6 +1,7 @@
 package com.mrrobot.overflow.profile.service;
 
 import com.mrrobot.overflow.common.exception.NotFoundException;
+import com.mrrobot.overflow.common.model.ProfileResponse;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.security.model.UserData;
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     Optional<User> findById(Long id);
 
-    List<User> findAll();
+    List<ProfileResponse> findAll();
 
     Boolean existsByUsername(String username);
 
@@ -24,4 +25,6 @@ public interface UserService {
     User update(User user) throws NotFoundException;
 
     UserData getUserData();
+
+    List<ProfileResponse> findAllByRanking(int parseInt);
 }

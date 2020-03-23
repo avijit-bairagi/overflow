@@ -1,19 +1,29 @@
 package com.mrrobot.overflow.profile.service;
 
 import com.mrrobot.overflow.common.exception.NotFoundException;
+import com.mrrobot.overflow.common.model.ProfileResponse;
 import com.mrrobot.overflow.common.utils.Constants;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
+import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.profile.repository.UserRepository;
 import com.mrrobot.overflow.security.jwt.JwtProvider;
 import com.mrrobot.overflow.security.model.UserData;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Configuration
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -24,7 +34,16 @@ public class UserServiceImpl implements UserService {
     HttpServletRequest servletRequest;
 
     @Autowired
+    ProfileService profileService;
+
+    @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Value("${user.defaultUserLimit}")
+    int defaultUserLimit;
 
     @Override
     public Optional<User> findByUsername(String username) {
@@ -38,8 +57,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<ProfileResponse> findAll() {
+
+        List<ProfileResponse> responseList = new ArrayList<>();
+
+        List<User> users = userRepository.findAll();
+
+        users.forEach(user -> {
+
+            Optional<Profile> profileOptional = profileService.findByUserId(user.getId());
+
+            if (profileOptional.isPresent())
+                responseList.add(getProfileResponse(user, profileOptional.get()));
+
+        });
+
+        return responseList;
     }
 
     @Override
@@ -72,5 +105,34 @@ public class UserServiceImpl implements UserService {
     public UserData getUserData() {
 
         return jwtProvider.getUserData(servletRequest.getHeader(Constants.AUTH_HEADER));
+    }
+
+    @Override
+    public List<ProfileResponse> findAllByRanking(int parse) {
+
+        Pageable pageable = PageRequest.of(parse, defaultUserLimit, Sort.by("point").descending());
+
+        List<ProfileResponse> responseList = new ArrayList<>();
+
+        List<Profile> profiles = profileService.findAll(pageable);
+
+        profiles.forEach(profile -> {
+
+            Optional<User> userOptional = userRepository.findById(profile.getUserId());
+
+            if (userOptional.isPresent())
+                responseList.add(getProfileResponse(userOptional.get(), profile));
+        });
+
+        return responseList;
+    }
+
+    private ProfileResponse getProfileResponse(User user, Profile profile) {
+
+        ProfileResponse response = modelMapper.map(profile, ProfileResponse.class);
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }

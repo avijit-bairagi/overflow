@@ -6,8 +6,10 @@ import com.mrrobot.overflow.common.utils.UserLevel;
 import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,5 +38,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Optional<Profile> findByUserId(long userId) {
         return profileRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<Profile> findAll(Pageable pageable) {
+        return profileRepository.findAll(pageable).getContent();
     }
 }

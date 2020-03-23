@@ -7,6 +7,7 @@ import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,5 +44,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public List<Profile> findAll(Pageable pageable) {
         return profileRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public List<Profile> findAllBySorting(Sort sort) {
+
+        return profileRepository.findAll(sort);
     }
 }

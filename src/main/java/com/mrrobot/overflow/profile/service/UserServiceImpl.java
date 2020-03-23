@@ -57,6 +57,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ProfileResponse findByUserId(Long id) throws NotFoundException {
+
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isEmpty())
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
+
+        User user = userOptional.get();
+
+        Optional<Profile> profileOptional = profileService.findByUserId(user.getId());
+
+        if (profileOptional.isEmpty())
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
+
+        Profile profile = profileOptional.get();
+
+        List<Profile> profiles = profileService.findAllBySorting(Sort.by("point").descending());
+
+        ProfileResponse response = getProfileResponse(user, profile);
+
+        response.setPosition(profiles.indexOf(profile) + 1);
+
+        return response;
+
+    }
+
+    @Override
     public List<ProfileResponse> findAll() {
 
         List<ProfileResponse> responseList = new ArrayList<>();
@@ -108,9 +135,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ProfileResponse> findAllByRanking(int parse) {
+    public List<ProfileResponse> findAllByRanking(int page) {
 
-        Pageable pageable = PageRequest.of(parse, defaultUserLimit, Sort.by("point").descending());
+        Pageable pageable = PageRequest.of(page, defaultUserLimit, Sort.by("point").descending());
 
         List<ProfileResponse> responseList = new ArrayList<>();
 
@@ -120,8 +147,11 @@ public class UserServiceImpl implements UserService {
 
             Optional<User> userOptional = userRepository.findById(profile.getUserId());
 
-            if (userOptional.isPresent())
-                responseList.add(getProfileResponse(userOptional.get(), profile));
+            if (userOptional.isPresent()){
+                ProfileResponse response = getProfileResponse(userOptional.get(), profile);
+                response.setPosition((profiles.indexOf(profile) + 1) + (page + 1));
+                responseList.add(response);
+            }
         });
 
         return responseList;

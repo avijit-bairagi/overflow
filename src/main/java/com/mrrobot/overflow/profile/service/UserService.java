@@ -14,6 +14,8 @@ public interface UserService {
 
     Optional<User> findById(Long id);
 
+    ProfileResponse findByUserId(Long id) throws NotFoundException;
+
     List<ProfileResponse> findAll();
 
     Boolean existsByUsername(String username);

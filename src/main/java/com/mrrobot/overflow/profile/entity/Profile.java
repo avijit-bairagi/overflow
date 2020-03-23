@@ -26,7 +26,7 @@ public class Profile {
     Double point = 0.0;
     Boolean isOpenForJob = false;
     Boolean isActive = true;
-    Date createdDate;
+    Date createdDate = new Date();
     Date updatedDate;
 
     public Profile() {

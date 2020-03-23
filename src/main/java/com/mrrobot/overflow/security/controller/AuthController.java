@@ -31,7 +31,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -154,9 +153,6 @@ public class AuthController {
 
             Profile profile = new Profile(registrationBody.getFirstName(), registrationBody.getLastName(),
                     registrationBody.getAddressLine(), registrationBody.getCity(), registrationBody.getPhoneNo(), registrationBody.getIsOpenForJob());
-            profile.setCreatedDate(new Date());
-            profile.setLevel(0);
-            profile.setPoint(0d);
             profile.setUserId(userData.getId());
 
             profileService.save(profile);

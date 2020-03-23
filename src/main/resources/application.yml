@@ -23,6 +23,9 @@ post:
   defaultPostPoint: 5
   defaultCommentPoint: 2
 
+user:
+  defaultUserLimit: 2
+
 server:
   port: 8999
   servlet:

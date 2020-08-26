@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "Profile not found!");
         }
         profile.setLevel(UserLevel.getLevelByPoint(profile.getPoint()));
+        profile.setUpdatedDate(new Date());
 
         return profileRepository.save(profile);
     }

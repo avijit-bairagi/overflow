@@ -25,6 +25,7 @@ public class Profile {
     Integer level = 1;
     Double point = 0.0;
     Boolean isOpenForJob = false;
+    Boolean phoneNoVisibility = true;
     Boolean isActive = true;
     Date createdDate = new Date();
     Date updatedDate;

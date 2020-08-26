@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.mrrobot.overflow.common.utils.Constants.USER_ROLE;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -138,16 +140,10 @@ public class AuthController {
             User user = new User(registrationBody.getFirstName(), registrationBody.getUsername(),
                     registrationBody.getEmail(), encoder.encode(registrationBody.getPassword()));
 
-            Set<String> strRoles = registrationBody.getRole();
+            Role role = roleService.findByName(USER_ROLE)
+                    .orElseThrow(() -> new RuntimeException(USER_ROLE + " - role not found!"));
             Set<Role> roles = new HashSet<>();
-
-            strRoles.forEach(r -> {
-
-                Role role = roleService.findByName("ROLE_" + r)
-                        .orElseThrow(() -> new RuntimeException(r + " role not found!"));
-                roles.add(role);
-            });
-
+            roles.add(role);
             user.setRoles(roles);
             User userData = userService.save(user);
 

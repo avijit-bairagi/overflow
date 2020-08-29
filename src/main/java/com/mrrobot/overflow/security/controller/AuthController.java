@@ -211,4 +211,66 @@ public class AuthController {
         else
             return ResponseEntity.badRequest().body(response);
     }
+
+    @GetMapping("/find-by-username/{username}")
+    public ResponseEntity<Response> findByUsername(@PathVariable("username") String username) {
+
+        log.debug("findByUsername(): start");
+
+        Response response = new Response();
+
+        try {
+
+            if(!userService.existsByUsername(username)){
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found.");
+            }
+            response.setCode(ResponseStatus.SUCCESS.value());
+            response.setMessage("User found.");
+
+        } catch (NotFoundException e) {
+
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        log.debug("findByUsername(): end");
+
+        if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            return ResponseEntity.ok().body(response);
+        else
+            return ResponseEntity.badRequest().body(response);
+    }
+
+    @GetMapping("/find-by-email/{email}")
+    public ResponseEntity<Response> findByEmail(@PathVariable("email") String email) {
+
+        log.debug("findByEmail(): start");
+
+        Response response = new Response();
+
+        try {
+
+            if(!userService.existsByEmail(email)){
+                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found.");
+            }
+
+            response.setCode(ResponseStatus.SUCCESS.value());
+            response.setMessage("User found.");
+
+        } catch (NotFoundException e) {
+
+            log.error("errorMessage={}", e.getMessage());
+            response.setCode(e.getCode());
+            response.setMessage(e.getMessage());
+        }
+
+        log.debug("findByEmail(): end");
+
+        if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
+            return ResponseEntity.ok().body(response);
+        else
+            return ResponseEntity.badRequest().body(response);
+    }
+
 }

@@ -60,7 +60,7 @@ public class ProfileController {
         return ResponseEntity.badRequest().body(response);
     }
 
-    @GetMapping("/")
+    @GetMapping()
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getProfile() {
 

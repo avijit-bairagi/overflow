@@ -9,6 +9,7 @@ import java.util.Date;
 @Setter
 public class ProfileResponse {
 
+    private Long userId;
     private String username;
     private String email;
     private String firstName;

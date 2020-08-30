@@ -37,9 +37,36 @@ public class ProfileController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> getProfile(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Response> getProfileById(@PathVariable("userId") Long userId) {
 
         Response response = new Response();
+
+        Optional<User> userOptional = userService.findById(userId);
+
+        if (userOptional.isPresent()) {
+            Optional<Profile> profileOptional = profileService.findByUserId(userId);
+
+            if (profileOptional.isPresent()) {
+                response.setCode(ResponseStatus.SUCCESS.value());
+                response.setMessage("User data fetch successfully!");
+                response.setData(getProfileData(userOptional.get(), profileOptional.get()));
+
+                return ResponseEntity.ok().body(response);
+            }
+        }
+
+        response.setCode(ResponseStatus.NOT_FOUND.value());
+        response.setMessage("User data not found!");
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @GetMapping("/")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response> getProfile() {
+
+        Response response = new Response();
+
+        Long userId = userService.getUserData().getUserId();
 
         Optional<User> userOptional = userService.findById(userId);
 

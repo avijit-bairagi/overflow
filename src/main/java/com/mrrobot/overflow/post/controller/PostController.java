@@ -51,7 +51,7 @@ public class PostController {
     Logger log = LoggerFactory.getLogger("debug-logger");
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getPosts() {
         Response response = new Response();
 
@@ -65,7 +65,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getPostById(@PathVariable("postId") Long postId) {
         Response response = new Response();
 
@@ -87,7 +87,7 @@ public class PostController {
     }
 
     @GetMapping("/recent")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getRecentPosts(@RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
 
@@ -101,7 +101,7 @@ public class PostController {
     }
 
     @GetMapping("/hot")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getHotPosts(@RequestParam(required = false, defaultValue = "0", name = "page") String page) {
 
         Response response = new Response();
@@ -118,7 +118,7 @@ public class PostController {
     }
 
     @GetMapping("/query/{query}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getPostsByQuery(@PathVariable("query") String query,
                                                     @RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
@@ -134,7 +134,7 @@ public class PostController {
 
 
     @GetMapping("/topic/{topic}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getPostsByTopic(@PathVariable("topic") String topic,
                                                     @RequestParam(required = false, defaultValue = "0", name = "page") String page) {
         Response response = new Response();
@@ -151,7 +151,7 @@ public class PostController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> save(@NotNull @RequestBody PostBody postBody) {
         Response response = new Response();
 

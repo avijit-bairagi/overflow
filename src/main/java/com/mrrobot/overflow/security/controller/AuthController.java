@@ -206,10 +206,7 @@ public class AuthController {
 
         log.debug("changePassword(): end");
 
-        if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
-            return ResponseEntity.ok().body(response);
-        else
-            return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/find-by-username/{username}")

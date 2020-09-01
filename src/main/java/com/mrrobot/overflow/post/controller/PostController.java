@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("post")
 public class PostController {
@@ -157,16 +158,29 @@ public class PostController {
 
         try {
 
+            Long userId = userService.getUserData().getUserId();
+
             Set<String> strTopics = postBody.getTopics();
             Set<Topic> topics = new HashSet<>();
 
             strTopics.forEach(t -> {
-                Topic topic = topicService.findByName(t)
-                        .orElseThrow(() -> new RuntimeException(t + " not found."));
-                topics.add(topic);
-            });
+                Optional<Topic> topicOptional = topicService.findByName(t);
 
-            Long userId = userService.getUserData().getUserId();
+                if (topicOptional.isPresent()) {
+                    topics.add(topicOptional.get());
+                } else {
+                    Topic topic = new Topic();
+                    topic.setName(t);
+                    topic.setCreatedDate(new Date());
+                    topic.setCreatedBy(userId);
+                    try {
+                        topics.add(topicService.save(topic));
+                    } catch (AlreadyExitsException e) {
+                        throw new RuntimeException(t + "already exists!");
+                    }
+                }
+
+            });
 
             Post post = new Post(postBody.getTitle(), postBody.getDescription(), userId, topics);
 
@@ -210,10 +224,7 @@ public class PostController {
             response.setMessage(e.getMessage());
         }
 
-        if (response.getCode().equalsIgnoreCase(ResponseStatus.SUCCESS.value()))
-            return ResponseEntity.ok().body(response);
-        else
-            return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/like/{postId}")

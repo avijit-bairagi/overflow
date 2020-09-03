@@ -22,7 +22,6 @@ public class Post {
     String title;
     String description;
     Integer hit = 0;
-    Integer favourite = 0;
     Double point = 0.0;
     Long postedBy;
     Date createdDate = new Date();

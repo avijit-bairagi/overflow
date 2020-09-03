@@ -17,12 +17,13 @@ public class PostResponse {
     String title;
     String description;
     Integer hit;
-    Integer favourite;
     Double point;
     Long postedBy;
     Long groupId;
     Date createdDate;
     Date updatedDate;
+    Integer totalComments;
+    Integer totalLikes;
 
     Set<Topic> topics;
     List<Comment> comments;

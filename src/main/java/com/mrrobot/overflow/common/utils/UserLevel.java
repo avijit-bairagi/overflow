@@ -7,9 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public enum UserLevel {
 
     BEGINNER(1, "BEGINNER", 100, 1.0, 0.1),
-    MASTER(2, "MASTER", 1000, 1.5, 0.5),
-    PRO(4, "PRO", 2000, 1.8, 0.8),
-    EXPERT(3, "EXPERT", 1500, 1.7, 0.6);
+    PRO(2, "PRO", 1000, 1.5, 0.5),
+    EXPERT(3, "EXPERT", 1500, 1.7, 0.6),
+    MASTER(4, "MASTER", 2000, 1.8, 0.8);
 
     private final Integer level;
     private final String name;

@@ -42,6 +42,12 @@ public class PostVoteServiceImpl implements PostVoteService {
 
         post.setPoint(point);
 
+        if(vote.getIsUpVote()){
+            post.setHit(post.getHit() +1);
+        }else{
+            post.setHit(post.getHit() -1);
+        }
+
         postService.update(post);
 
         if (vote.getVoteBy() != vote.getPost().getPostedBy()) {

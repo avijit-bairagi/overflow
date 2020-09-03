@@ -82,7 +82,7 @@ public class PostController {
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Post(s) fetched successfully.");
-        response.setData(getPostResponse(postOptional.get(), comments, likes));
+        response.setData(getPostResponseWithCommentsAndLikes(postOptional.get(), comments, likes));
 
         return ResponseEntity.ok(response);
     }
@@ -206,7 +206,7 @@ public class PostController {
 
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Post saved successfully.");
-            response.setData(getPostResponse(postData, new ArrayList<>(), new ArrayList<>()));
+            response.setData(getPostResponseWithCommentsAndLikes(postData, new ArrayList<>(), new ArrayList<>()));
 
         } catch (AlreadyExitsException e) {
             log.error("errorMessage={}", e.getMessage());
@@ -252,11 +252,6 @@ public class PostController {
             like.setPost(postOptional.get());
 
             likeService.save(like);
-
-            Post post = postOptional.get();
-            post.setHit(post.getHit() + 1);
-
-            postService.update(post);
 
         } catch (AlreadyExitsException e) {
             log.error("ErrorMessage={}", e.getMessage());
@@ -318,16 +313,27 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    private PostResponse getPostResponse(Post post, List<Comment> comments, List<Like> likes) {
+    private PostResponse getPostResponseWithCommentsAndLikes(Post post, List<Comment> comments, List<Like> likes) {
         PostResponse response = modelMapper.map(post, PostResponse.class);
         response.setComments(comments);
         response.setLikes(likes);
         return response;
     }
 
+    private PostResponse getPostResponse(Post post, List<Comment> comments, List<Like> likes) {
+        PostResponse response = modelMapper.map(post, PostResponse.class);
+        response.setTotalComments(comments.size());
+        response.setTotalLikes(likes.size());
+        return response;
+    }
+
     private List<PostResponse> getPostListResponse(List<Post> posts) {
         List<PostResponse> responses = new ArrayList<>();
-        posts.forEach(post -> responses.add(getPostResponse(post, new ArrayList<>(), new ArrayList<>())));
+        posts.forEach(post -> {
+            List<Comment> comments = commentService.findByPostId(post.getId());
+            List<Like> likes = likeService.findByPostId(post.getId());
+            responses.add(getPostResponse(post, comments, likes));
+        });
         return responses;
     }
 }

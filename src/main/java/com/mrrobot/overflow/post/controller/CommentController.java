@@ -83,7 +83,7 @@ public class CommentController {
 
     @GetMapping("/vote/{commentId}/{isUpVote}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> votePost(@PathVariable("commentId") long postId, @PathVariable("isUpVote") int isUpVote) {
+    public ResponseEntity<Response> voteComment(@PathVariable("commentId") long postId, @PathVariable("isUpVote") int isUpVote) {
 
         Response response = new Response();
 

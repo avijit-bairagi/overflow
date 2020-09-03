@@ -38,9 +38,9 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
         Comment comment = vote.getComment();
 
-        Double point = comment.getPoint() + rankService.getPoint(vote.getVoteBy(), vote.getIsUpVote());
+        Double point = rankService.getPoint(vote.getVoteBy(), vote.getIsUpVote());
 
-        comment.setPoint(point);
+        comment.setPoint(comment.getPoint() + point);
 
         commentService.update(comment);
 

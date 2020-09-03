@@ -8,7 +8,7 @@ public enum UserLevel {
 
     BEGINNER(1, "BEGINNER", 100, 1.0, 0.1),
     PRO(2, "PRO", 1000, 1.5, 0.5),
-    EXPERT(3, "EXPERT", 1500, 1.7, 0.6),
+    EXPERT(3, "EXPERT", 1500, 1.6, 0.6),
     MASTER(4, "MASTER", 2000, 1.8, 0.8);
 
     private final Integer level;

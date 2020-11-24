@@ -14,6 +14,7 @@ import java.util.Set;
 @Setter
 public class PostResponse {
 
+    Long id;
     String title;
     String description;
     Integer hit;
@@ -26,6 +27,6 @@ public class PostResponse {
     Integer totalLikes;
 
     Set<Topic> topics;
-    List<Comment> comments;
+    List<CommentResponse> comments;
     List<Like> likes;
 }

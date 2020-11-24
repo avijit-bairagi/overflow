@@ -12,7 +12,6 @@ import java.util.Date;
 @Entity(name = "comments")
 public class Comment {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -25,6 +24,6 @@ public class Comment {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="postId", nullable=false)
+    @JoinColumn(name = "postId", nullable = false)
     private Post post;
 }

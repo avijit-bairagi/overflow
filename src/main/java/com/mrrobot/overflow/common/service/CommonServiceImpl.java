@@ -21,19 +21,21 @@ public class CommonServiceImpl implements CommonService {
     UserService userService;
 
     @Override
-    public void checkUser(String username) throws NotFoundException, UserLoginException {
+    public User checkUser(String username) throws NotFoundException, UserLoginException {
+
+        Optional<User> userOptional = userService.findByUsername(username);
+
+        if (userOptional.isEmpty())
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
 
         Config config = configService.getConfig();
 
         if (config.isApprovalNeeded()){
 
-            Optional<User> userOptional = userService.findByUsername(username);
-
-            if (userOptional.isEmpty())
-                throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User not found!");
-
             if (!userOptional.get().isApproved())
                 throw new UserLoginException(ResponseStatus.USER_NOT_APPROVED.value(), "User is not approved yet!");
         }
+
+        return userOptional.get();
     }
 }

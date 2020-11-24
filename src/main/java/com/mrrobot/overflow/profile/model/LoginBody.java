@@ -5,11 +5,11 @@ import javax.validation.constraints.Size;
 
 public class LoginBody {
     @NotBlank
-    @Size(min=3, max = 60)
+    @Size(min = 3, max = 20, message = "username must be between 3 to 20 characters")
     private String username;
 
     @NotBlank
-    @Size(min = 6, max = 40)
+    @Size(min = 6, max = 20, message = "password must be between 6 to 20 characters")
     private String password;
 
     public String getUsername() {

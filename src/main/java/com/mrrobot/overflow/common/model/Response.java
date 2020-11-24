@@ -9,4 +9,5 @@ public class Response {
     String code;
     String message;
     Object data;
+    Object errors;
 }

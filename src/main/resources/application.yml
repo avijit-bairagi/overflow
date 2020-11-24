@@ -17,7 +17,7 @@ security:
 post:
   rank:
     defaultPoint: 5.0
-  defaultLimit: 2
+  defaultLimit: 10
   topic:
     defaultHotLimit: 2
   defaultPostPoint: 5

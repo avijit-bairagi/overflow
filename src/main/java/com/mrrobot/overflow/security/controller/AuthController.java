@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -70,11 +71,13 @@ public class AuthController {
 
         log.debug("authenticateUser(): start");
 
+        HashMap<String, String> errors = new HashMap<>();
+
         Response response = new Response();
 
         try {
 
-            commonService.checkUser(loginBody.getUsername());
+            User user = commonService.checkUser(loginBody.getUsername());
 
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginBody.getUsername(), loginBody.getPassword()));
@@ -85,11 +88,12 @@ public class AuthController {
 
             response.setCode(ResponseStatus.SUCCESS.value());
             response.setMessage("Login successful!");
-            response.setData(new JwtResponse(jwt));
+            response.setData(new JwtResponse(jwt, user.getId()));
 
         } catch (BadCredentialsException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(ResponseStatus.BAD_CREDENTIALS.value());
+            errors.put("password", "Wrong password");
             response.setMessage(e.getMessage());
         } catch (AuthenticationException e) {
             log.error("errorMessage={}", e.getMessage());
@@ -98,12 +102,15 @@ public class AuthController {
         } catch (NotFoundException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(e.getCode());
+            errors.put("username", "User not found");
             response.setMessage(e.getMessage());
         } catch (UserLoginException e) {
             log.error("errorMessage={}", e.getMessage());
             response.setCode(e.getCode());
             response.setMessage(e.getMessage());
         }
+
+        response.setErrors(errors);
 
         log.debug("authenticateUser(): end");
 

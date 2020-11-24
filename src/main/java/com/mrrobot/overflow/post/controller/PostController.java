@@ -5,6 +5,7 @@ import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.*;
+import com.mrrobot.overflow.post.model.CommentResponse;
 import com.mrrobot.overflow.post.model.PostBody;
 import com.mrrobot.overflow.post.model.PostResponse;
 import com.mrrobot.overflow.post.service.*;
@@ -315,9 +316,27 @@ public class PostController {
 
     private PostResponse getPostResponseWithCommentsAndLikes(Post post, List<Comment> comments, List<Like> likes) {
         PostResponse response = modelMapper.map(post, PostResponse.class);
-        response.setComments(comments);
+        response.setComments(getCommentResponse(comments));
         response.setLikes(likes);
+        response.setTotalLikes(likes.size());
+        response.setTotalComments(comments.size());
         return response;
+    }
+
+    private List<CommentResponse> getCommentResponse(List<Comment> comments) {
+
+        List<CommentResponse> responses = new ArrayList<>();
+
+        comments.forEach(comment -> {
+            CommentResponse response = modelMapper.map(comment, CommentResponse.class);
+            try {
+                response.setCommentedUser(userService.findByUserId(comment.getCommentedBy()).getUsername());
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            }
+            responses.add(response);
+        });
+        return responses;
     }
 
     private PostResponse getPostResponse(Post post, List<Comment> comments, List<Like> likes) {

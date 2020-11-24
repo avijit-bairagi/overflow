@@ -101,10 +101,7 @@ public class CommentController {
 
             CommentVote vote = new CommentVote();
             vote.setVoteBy(userId);
-            if (isUpVote == 1)
-                vote.setIsUpVote(true);
-            else
-                vote.setIsUpVote(false);
+            vote.setIsUpVote(isUpVote == 1);
             vote.setComment(commentOptional.get());
 
             voteService.save(vote);

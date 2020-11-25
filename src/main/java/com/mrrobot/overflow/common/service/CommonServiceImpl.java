@@ -36,6 +36,9 @@ public class CommonServiceImpl implements CommonService {
                 throw new UserLoginException(ResponseStatus.USER_NOT_APPROVED.value(), "User is not approved yet!");
         }
 
+        if(!userOptional.get().isActive())
+            throw new UserLoginException(ResponseStatus.USER_NOT_APPROVED.value(), "User is inactive!");
+
         return userOptional.get();
     }
 }

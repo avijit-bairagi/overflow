@@ -39,6 +39,8 @@ public class User {
     @JsonIgnore
     private boolean isApproved;
 
+    private boolean isActive = true;
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",

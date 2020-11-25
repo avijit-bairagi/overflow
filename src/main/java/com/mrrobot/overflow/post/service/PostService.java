@@ -18,6 +18,8 @@ public interface PostService {
 
     List<Post> findByQuery(String query, int page);
 
+    List<Post> findByGroupId(Long groupId);
+
     List<Post> findByTopics(List<Topic> topics, int page);
 
     Post save(Post post) throws AlreadyExitsException, NotFoundException;

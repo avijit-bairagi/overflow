@@ -42,6 +42,12 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
         comment.setPoint(comment.getPoint() + point);
 
+        if(vote.getIsUpVote()){
+            comment.setHit(comment.getHit() +1);
+        }else{
+            comment.setHit(comment.getHit() -1);
+        }
+
         commentService.update(comment);
 
         if (vote.getVoteBy() != vote.getComment().getCommentedBy()) {

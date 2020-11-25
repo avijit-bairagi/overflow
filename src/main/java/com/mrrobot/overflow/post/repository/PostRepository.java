@@ -17,5 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByTitleContaining(String title, Pageable pageable);
 
+    List<Post> findByGroupId(Long groupId);
+
     List<Post> findByTopicsIn(Collection<Topic> topics, Pageable pageable);
 }

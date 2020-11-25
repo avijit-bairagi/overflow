@@ -68,7 +68,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> getPostById(@PathVariable("postId") Long postId) {
+    public ResponseEntity<Response> getPostById(@PathVariable("postId") Long postId) throws NotFoundException {
         Response response = new Response();
 
         Optional<Post> postOptional = postService.findById(postId);
@@ -189,9 +189,12 @@ public class PostController {
 
             if (post.getGroupId() != 0) {
                 Group group = groupService.findById(post.getGroupId());
-                if (!group.getUsers().stream().anyMatch(user -> user.getId() == userId)) {
-                    throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User is not subscribed in this group!");
+                if (group.getCreatedBy() != userId) {
+                    if (!group.getUsers().stream().anyMatch(user -> user.getId() == userId)) {
+                        throw new NotFoundException(ResponseStatus.NOT_FOUND.value(), "User is not subscribed in this group!");
+                    }
                 }
+
             }
 
             Post postData = postService.save(post);
@@ -314,12 +317,13 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    private PostResponse getPostResponseWithCommentsAndLikes(Post post, List<Comment> comments, List<Like> likes) {
+    private PostResponse getPostResponseWithCommentsAndLikes(Post post, List<Comment> comments, List<Like> likes) throws NotFoundException {
         PostResponse response = modelMapper.map(post, PostResponse.class);
         response.setComments(getCommentResponse(comments));
         response.setLikes(likes);
         response.setTotalLikes(likes.size());
         response.setTotalComments(comments.size());
+        response.setPostedUser(userService.findByUserId(post.getPostedBy()).getUsername());
         return response;
     }
 
@@ -339,8 +343,9 @@ public class PostController {
         return responses;
     }
 
-    private PostResponse getPostResponse(Post post, List<Comment> comments, List<Like> likes) {
+    private PostResponse getPostResponse(Post post, List<Comment> comments, List<Like> likes) throws NotFoundException {
         PostResponse response = modelMapper.map(post, PostResponse.class);
+        response.setPostedUser(userService.findByUserId(post.getPostedBy()).getUsername());
         response.setTotalComments(comments.size());
         response.setTotalLikes(likes.size());
         return response;
@@ -351,7 +356,11 @@ public class PostController {
         posts.forEach(post -> {
             List<Comment> comments = commentService.findByPostId(post.getId());
             List<Like> likes = likeService.findByPostId(post.getId());
-            responses.add(getPostResponse(post, comments, likes));
+            try {
+                responses.add(getPostResponse(post, comments, likes));
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            }
         });
         return responses;
     }

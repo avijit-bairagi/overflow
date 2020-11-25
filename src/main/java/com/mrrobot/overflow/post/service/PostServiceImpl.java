@@ -62,6 +62,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> findByGroupId(Long groupId) {
+        return postRepository.findByGroupId(groupId);
+    }
+
+    @Override
     public List<Post> findByTopics(List<Topic> topics, int page) {
 
         Pageable pageable = PageRequest.of(page, defaultPostLimit, Sort.by("createdDate").descending());

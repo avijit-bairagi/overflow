@@ -20,6 +20,7 @@ public class PostResponse {
     Integer hit;
     Double point;
     Long postedBy;
+    String postedUser;
     Long groupId;
     Date createdDate;
     Date updatedDate;

@@ -2,6 +2,7 @@ package com.mrrobot.overflow.post.controller;
 
 import com.mrrobot.overflow.common.exception.AlreadyExitsException;
 import com.mrrobot.overflow.common.exception.NotFoundException;
+import com.mrrobot.overflow.common.model.GroupRes;
 import com.mrrobot.overflow.common.model.ProfileResponse;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
@@ -10,6 +11,8 @@ import com.mrrobot.overflow.post.entity.Group;
 import com.mrrobot.overflow.post.entity.Like;
 import com.mrrobot.overflow.post.entity.Post;
 import com.mrrobot.overflow.post.model.*;
+import com.mrrobot.overflow.post.repository.GroupRepository;
+import com.mrrobot.overflow.post.repository.PostRepository;
 import com.mrrobot.overflow.post.service.CommentService;
 import com.mrrobot.overflow.post.service.GroupService;
 import com.mrrobot.overflow.post.service.LikeService;
@@ -35,6 +38,9 @@ public class GroupController {
     GroupService groupService;
 
     @Autowired
+    GroupRepository groupRepository;
+
+    @Autowired
     UserService userService;
 
     @Autowired
@@ -44,6 +50,9 @@ public class GroupController {
     CommentService commentService;
     @Autowired
     LikeService likeService;
+
+    @Autowired
+    PostRepository postRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -192,11 +201,22 @@ public class GroupController {
 
         Response response = new Response();
 
-        List<Group> groups = groupService.findAll();
+        Long userId = userService.getUserData().getUserId();
+
+        List<Group> myGroups = groupRepository.findByCreatedBy(userId);
+        List<Group> mySubGroups = groupRepository.findByUsersId(userId);
+
+        myGroups.addAll(mySubGroups);
+
+        GroupRes res = new GroupRes();
+        res.setGroups(convertToResponse(myGroups));
+        res.setTotalGroup(myGroups.size());
+        res.setTotalPgroup(myGroups.size());
+        res.setTotalPost(postRepository.findByPostedByAndGroupIdNot(userId, 0l).size());
 
         response.setCode(ResponseStatus.SUCCESS.value());
         response.setMessage("Group(s) fetched successfully!");
-        response.setData(convertToResponse(groups));
+        response.setData(res);
 
         return ResponseEntity.ok().body(response);
     }

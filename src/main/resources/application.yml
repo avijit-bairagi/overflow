@@ -18,13 +18,15 @@ post:
   rank:
     defaultPoint: 5.0
   defaultLimit: 10
+  defaultLimit2: 3
   topic:
-    defaultHotLimit: 2
+    defaultHotLimit: 3
   defaultPostPoint: 5
   defaultCommentPoint: 2
 
 user:
-  defaultUserLimit: 2
+  defaultUserLimit: 15
+  defaultUserLimit2: 3
 
 server:
   port: 8999

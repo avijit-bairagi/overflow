@@ -29,4 +29,6 @@ public interface UserService {
     UserData getUserData();
 
     List<ProfileResponse> findAllByRanking(int parseInt);
+
+    List<ProfileResponse> findAllByRanking2(int parseInt);
 }

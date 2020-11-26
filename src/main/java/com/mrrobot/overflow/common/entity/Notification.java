@@ -7,39 +7,29 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Getter
 @Setter
-@Entity(name = "config")
-public class Config {
+@Entity(name = "notifications")
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    String appName;
+    boolean isSeen = false;
 
-    String nameEn;
+    Long userId;
 
-    String nameBn;
+    Long postId;
 
-    String type;
+    Long groupId;
 
-    String addressLine;
+    boolean isGroup;
 
-    String city;
+    String text;
 
-    String logo;
+    Date createdTime = new Date();
 
-    String domain;
-
-    String apiEndPoint;
-
-    String phoneNo;
-
-    String email;
-
-    String fax;
-
-    boolean isApprovalNeeded;
 }

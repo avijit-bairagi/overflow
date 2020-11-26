@@ -4,6 +4,10 @@ import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.ProfileResponse;
 import com.mrrobot.overflow.common.utils.Constants;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
+import com.mrrobot.overflow.common.utils.UserLevel;
+import com.mrrobot.overflow.post.repository.CommentRepository;
+import com.mrrobot.overflow.post.repository.GroupRepository;
+import com.mrrobot.overflow.post.repository.PostRepository;
 import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.profile.repository.UserRepository;
@@ -37,6 +41,15 @@ public class UserServiceImpl implements UserService {
     ProfileService profileService;
 
     @Autowired
+    PostRepository postRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
+
+    @Autowired
+    GroupRepository groupRepository;
+
+    @Autowired
     JwtProvider jwtProvider;
 
     @Autowired
@@ -44,6 +57,8 @@ public class UserServiceImpl implements UserService {
 
     @Value("${user.defaultUserLimit}")
     int defaultUserLimit;
+    @Value("${user.defaultUserLimit2}")
+    int defaultUserLimit2;
 
     @Override
     public Optional<User> findByUsername(String username) {
@@ -149,7 +164,27 @@ public class UserServiceImpl implements UserService {
 
             if (userOptional.isPresent()){
                 ProfileResponse response = getProfileResponse(userOptional.get(), profile);
-                response.setPosition((profiles.indexOf(profile) + 1) + (page + 1));
+                responseList.add(response);
+            }
+        });
+
+        return responseList;
+    }
+
+    @Override
+    public List<ProfileResponse> findAllByRanking2(int parseInt) {
+        Pageable pageable = PageRequest.of(parseInt, defaultUserLimit2, Sort.by("point").descending());
+
+        List<ProfileResponse> responseList = new ArrayList<>();
+
+        List<Profile> profiles = profileService.findAll(pageable);
+
+        profiles.forEach(profile -> {
+
+            Optional<User> userOptional = userRepository.findById(profile.getUserId());
+
+            if (userOptional.isPresent()){
+                ProfileResponse response = getProfileResponse(userOptional.get(), profile);
                 responseList.add(response);
             }
         });
@@ -160,8 +195,14 @@ public class UserServiceImpl implements UserService {
     private ProfileResponse getProfileResponse(User user, Profile profile) {
 
         ProfileResponse response = modelMapper.map(profile, ProfileResponse.class);
+
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
+        response.setStatus(UserLevel.findByLevel(response.getLevel()).getName());
+
+        response.setTotalPost(postRepository.findByPostedBy(user.getId()).size());
+        response.setTotalGroup(user.getGroups().size() + groupRepository.findByCreatedBy(user.getId()).size());
+        response.setTotalComment(commentRepository.findByCommentedBy(user.getId()).size());
 
         return response;
     }

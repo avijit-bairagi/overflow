@@ -54,6 +54,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> findByPopularity(int page) {
+
+        Pageable pageable = PageRequest.of(page, defaultPostLimit, Sort.by("hit").descending());
+
+        return postRepository.findAll(pageable).getContent();
+    }
+
+    @Override
     public List<Post> findByQuery(String query, int page) {
 
         Pageable pageable = PageRequest.of(page, defaultPostLimit, Sort.by("createdDate").descending());

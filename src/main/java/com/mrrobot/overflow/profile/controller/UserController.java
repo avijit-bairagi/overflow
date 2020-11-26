@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -39,7 +40,6 @@ public class UserController {
     }
 
     @GetMapping("rank")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> getUserByRanking(@RequestParam(required = false, defaultValue = "0", name = "page") String page) {
 
         Response response = new Response();

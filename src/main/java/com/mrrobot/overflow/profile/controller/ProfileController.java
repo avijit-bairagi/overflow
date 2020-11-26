@@ -4,6 +4,13 @@ import com.mrrobot.overflow.common.exception.NotFoundException;
 import com.mrrobot.overflow.common.model.ProfileResponse;
 import com.mrrobot.overflow.common.model.Response;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
+import com.mrrobot.overflow.common.utils.UserLevel;
+import com.mrrobot.overflow.post.entity.Post;
+import com.mrrobot.overflow.post.model.PostResponse;
+import com.mrrobot.overflow.post.repository.CommentRepository;
+import com.mrrobot.overflow.post.repository.GroupRepository;
+import com.mrrobot.overflow.post.repository.LikeRepository;
+import com.mrrobot.overflow.post.repository.PostRepository;
 import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.entity.User;
 import com.mrrobot.overflow.profile.model.ProfileUpdateRequestDto;
@@ -18,6 +25,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,15 +40,54 @@ public class ProfileController {
     UserService userService;
 
     @Autowired
+    PostRepository postRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
+
+    @Autowired
+    GroupRepository groupRepository;
+
+    @Autowired
+    LikeRepository likeRepository;
+
+    @Autowired
     ModelMapper modelMapper;
 
     Logger log = LoggerFactory.getLogger("debug-logger");
 
-    @GetMapping("/{userId}")
+//    @GetMapping("/{userId}")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    public ResponseEntity<Response> getProfileById(@PathVariable("userId") Long userId) {
+//
+//        Response response = new Response();
+//
+//        Optional<User> userOptional = userService.findById(userId);
+//
+//        if (userOptional.isPresent()) {
+//            Optional<Profile> profileOptional = profileService.findByUserId(userId);
+//
+//            if (profileOptional.isPresent()) {
+//                response.setCode(ResponseStatus.SUCCESS.value());
+//                response.setMessage("User data fetch successfully!");
+//                response.setData(getProfileData(userOptional.get(), profileOptional.get()));
+//
+//                return ResponseEntity.ok().body(response);
+//            }
+//        }
+//
+//        response.setCode(ResponseStatus.NOT_FOUND.value());
+//        response.setMessage("User data not found!");
+//        return ResponseEntity.badRequest().body(response);
+//    }
+
+    @GetMapping()
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> getProfileById(@PathVariable("userId") Long userId) {
+    public ResponseEntity<Response> getProfile() {
 
         Response response = new Response();
+
+        Long userId = userService.getUserData().getUserId();
 
         Optional<User> userOptional = userService.findById(userId);
 
@@ -60,18 +108,17 @@ public class ProfileController {
         return ResponseEntity.badRequest().body(response);
     }
 
-    @GetMapping()
+
+    @GetMapping("/{username}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response> getProfile() {
+    public ResponseEntity<Response> getProfileByUsername(@PathVariable("username") String username) {
 
         Response response = new Response();
 
-        Long userId = userService.getUserData().getUserId();
-
-        Optional<User> userOptional = userService.findById(userId);
+        Optional<User> userOptional = userService.findByUsername(username);
 
         if (userOptional.isPresent()) {
-            Optional<Profile> profileOptional = profileService.findByUserId(userId);
+            Optional<Profile> profileOptional = profileService.findByUserId(userOptional.get().getId());
 
             if (profileOptional.isPresent()) {
                 response.setCode(ResponseStatus.SUCCESS.value());
@@ -129,6 +176,23 @@ public class ProfileController {
         ProfileResponse response = modelMapper.map(profile, ProfileResponse.class);
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
+
+        response.setStatus(UserLevel.findByLevel(response.getLevel()).getName());
+
+        response.setTotalPost(postRepository.findByPostedBy(user.getId()).size());
+        response.setTotalGroup(user.getGroups().size() + groupRepository.findByCreatedBy(user.getId()).size());
+        response.setTotalComment(commentRepository.findByCommentedBy(user.getId()).size());
+        response.setTotalLike(likeRepository.findByLikedBy(user.getId()).size());
+
+        List<Post> postList =  postRepository.findTop10ByPostedByAndGroupIdOrderByCreatedDateDesc(user.getId(), 0l);
+
+        List<PostResponse> postResponses = new ArrayList<>();
+
+        postList.forEach(post -> {
+            postResponses.add(modelMapper.map(post, PostResponse.class));
+        });
+
+        response.setPosts(postResponses);
 
         return response;
     }

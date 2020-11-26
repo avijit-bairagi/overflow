@@ -1,12 +1,15 @@
 package com.mrrobot.overflow.post.service;
 
+import com.mrrobot.overflow.common.entity.Notification;
 import com.mrrobot.overflow.common.exception.AlreadyExitsException;
 import com.mrrobot.overflow.common.exception.NotFoundException;
+import com.mrrobot.overflow.common.repository.NotificationRepository;
 import com.mrrobot.overflow.common.utils.ResponseStatus;
 import com.mrrobot.overflow.post.entity.Comment;
 import com.mrrobot.overflow.post.repository.CommentRepository;
 import com.mrrobot.overflow.profile.entity.Profile;
 import com.mrrobot.overflow.profile.service.ProfileService;
+import com.mrrobot.overflow.profile.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +30,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     ProfileService profileService;
+
+    @Autowired
+    NotificationRepository notificationRepository;
+
+    @Autowired
+    UserService userService;
 
     @Override
     public Optional<Comment> findById(Long id) {
@@ -57,6 +66,24 @@ public class CommentServiceImpl implements CommentService {
             profile.setPoint(profile.getPoint() + defaultCommentPoint);
 
             profileService.update(profile);
+        }
+
+        if(comment.getPost().getId() != userService.getUserData().getUserId()) {
+            Notification notification = new Notification();
+            notification.setUserId(comment.getPost().getPostedBy());
+            notification.setPostId(comment.getPost().getId());
+            notification.setText("<i><b>" +userService.getUserData().getUsername()+ "</i></b> commented on your post.");
+
+            if(comment.getPost().getGroupId() != 0) {
+                notification.setGroupId(comment.getPost().getGroupId());
+                notification.setGroup(true);
+            }else{
+                notification.setGroupId(0l);
+                notification.setGroup(false);
+            }
+
+            notificationRepository.save(notification);
+
         }
 
         return commentRepository.save(comment);

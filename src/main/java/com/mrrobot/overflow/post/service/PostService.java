@@ -16,6 +16,8 @@ public interface PostService {
 
     List<Post> findResent(int page);
 
+    List<Post> findByPopularity(int page);
+
     List<Post> findByQuery(String query, int page);
 
     List<Post> findByGroupId(Long groupId);

@@ -1,6 +1,6 @@
 package com.mrrobot.overflow.post.model;
 
-import com.mrrobot.overflow.post.entity.Comment;
+import com.mrrobot.overflow.common.model.ProfileResponse;
 import com.mrrobot.overflow.post.entity.Like;
 import com.mrrobot.overflow.post.entity.Topic;
 import lombok.Getter;
@@ -26,8 +26,12 @@ public class PostResponse {
     Date updatedDate;
     Integer totalComments;
     Integer totalLikes;
+    boolean alreadyFollowed;
 
     Set<Topic> topics;
     List<CommentResponse> comments;
     List<Like> likes;
+
+    List<ProfileResponse>  topUsers;
+    List<Topic> topTopics;
 }
